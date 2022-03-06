@@ -7,7 +7,7 @@
     "build": "next build",
     "export": "next export",
     "build2": "next build && next export",
-    "start": "next start"
+    "start": "next start -p $PORT"
   },
   "dependencies": {
     "@danah/react-hook-scrollto": "^1.0.10",
