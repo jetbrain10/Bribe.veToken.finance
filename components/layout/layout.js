@@ -4,7 +4,7 @@ import Link from "next/link";
 import Header from "../header";
 import SnackbarController from "../snackbar";
 
-export const siteTitle = "bribe.crv.finance";
+export const siteTitle = "bribe.vetoken.finance";
 
 export default function Layout({
   children,
@@ -28,8 +28,8 @@ export default function Layout({
           as="font"
           crossOrigin=""
         />
-        <meta name="description" content="bribe.crv.finance" />
-        <meta name="og:title" content="bribe.crv.finance" />
+        <meta name="description" content="bribe.vetoken.finance" />
+        <meta name="og:title" content="bribe.vetoken.finance" />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <div className={classes.content}>

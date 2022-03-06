@@ -66,7 +66,7 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <React.Fragment>
       <Head>
-        <title>bribe.crv.finance</title>
+        <title>bribe.vetoken.finance</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <ThemeProvider theme={themeConfig}>
