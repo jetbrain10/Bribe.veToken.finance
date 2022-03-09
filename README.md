@@ -4,24 +4,7 @@ A screen with a URL param to specify the reward_token
 Then we just iterate through all the gauges and display if there is any claimable tokens
 And an add reward option, where you just give a token address, and choose a gauge and amount
 
-# Nribe NextJS website heroku deployment procedure
-
-This is an instruction of deploying bribe.vetoken.finance on heroku
-
-
-## Summary
- Three parts of the workflow as below 
-
-  - Deploy to heroku
-  - Add subdomain to heroku
-  - Add DNS mapping on Cloudfare
-  - Get SSL certificate from Cloudfare 
-  - Convert heroku box to paid version(hobby), set up SSL certificate
-  
-
-## Procedure
-
-### Local run
+## Local run
 * get your project infra key from https://infura.io/, it is used in stores/connectors/connectors.js, make it env variable
 ```sh
 export NEXT_PUBLIC_PROVIDER='key from infra project'
@@ -41,8 +24,22 @@ for example, 'https://rinkeby.infura.io/v3/bd80ce1ca1f94da48e151bb6868bb150'
 ```
 * open brower at http://localhost:3000/ 
 
-### Heroku deployment 
-if deploy to current setup, please contact karen.
+## Heroku deployment 
+If deploy to current setup, please contact karen.
+
+Below is an instruction of deploying bribe.vetoken.finance on heroku from scratch.
+Three parts of the workflow as below :
+
+  - Deploy to heroku
+  - Add subdomain to heroku
+  - Add DNS mapping on Cloudfare
+  - Get SSL certificate from Cloudfare 
+  - Convert heroku box to paid version(hobby), set up SSL certificate
+  
+
+## Procedure
+
+
 
 ### Heroku deployment from scratch
 https://github.com/mars/heroku-nextjs#production-deployment
@@ -74,4 +71,10 @@ git push heroku master'
 * login into heroku website  https://dashboard.heroku.com/apps, click the deployed app to convert to a hobby app
 * follow https://devcenter.heroku.com/articles/custom-domains to add custom domain, get mapping and add to cloudfare DNS 
 * follow https://support.cloudflare.com/hc/en-us/articles/205893698-Configure-Cloudflare-and-Heroku-over-HTTPS to create a certificate and add to heroku
+
+Heroku UI deployment
+* go to deploy tab, choose Github as Deployment method, enter credentials to connect
+* add env variable via UI , go to settings > add ConfigVars if not here
+* choose the right branch to deploy in Manual deploy section, click 'Deploy Branch' button
+* open the url provided at the end of the deployment log to check if the deployment is successful or not
 
