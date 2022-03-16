@@ -20,6 +20,7 @@ const coreTheme = {
   },
   typography: {
     fontFamily: [
+      'Poppins',
       'Inter',
       'Arial',
       '-apple-system',
@@ -34,7 +35,8 @@ const coreTheme = {
     ].join(','),
     h1: {
       fontFamily: [
-        '"Helvetica Neue"',
+      'Poppins',
+      '"Helvetica Neue"',
         'Inter',
       ],
       fontSize: '60px',
@@ -49,7 +51,8 @@ const coreTheme = {
     },
     h3: {
       fontFamily: [
-        'Inter',
+      'Poppins',
+      'Inter',
       ],
       fontSize: '20px',
       fontWeight: 600
@@ -112,8 +115,7 @@ const coreTheme = {
     MuiOutlinedInput: {
       input: {
         padding: '26px 24px',
-        fontSize: '18px'
-      }
+        fontSize: '18px'      }
     },
     MuiTooltip: {
       tooltip: {
