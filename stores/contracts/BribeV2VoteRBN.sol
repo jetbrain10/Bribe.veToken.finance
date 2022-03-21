@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-08-25
-*/
-
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
@@ -33,9 +29,14 @@ interface erc20 {
 }
 
 contract BribeV2Vote {
-    vote constant VOTE = vote(0xE478de485ad2fe566d49342Cbd03E49ed7DB3356);
-    ve constant veCRV = ve(0x5f3b5DfEb7B28CDbD7FAba78963EE202a494e2A2);
+    vote VOTE;
+    ve VE;
     uint constant desired_vote = 1;
+
+    constructor(address _voteAddress, address _veAddress){
+        VOTE = vote(_voteAddress);
+        VE = ve(_veAddress);
+    }
 
     // vote_id => reward_token => reward_amount
     mapping(uint => mapping(address => uint)) public reward_amount;
@@ -73,20 +74,20 @@ contract BribeV2Vote {
 
     function estimate_bribe(uint vote_id, address reward_token, address claimant) external view returns (uint) {
         vote.VoteData memory _vote = VOTE.getVote(vote_id);
-        uint _vecrv = veCRV.balanceOf(claimant, _vote.start_date);
+        uint _ve = VE.balanceOf(claimant, _vote.start_date);
         if (VOTE.getVoterState(vote_id, claimant) == desired_vote) {
-            return reward_amount[vote_id][reward_token] * _vecrv / _vote.yea;
+            return reward_amount[vote_id][reward_token] * _ve / _vote.yea;
         } else {
-            return reward_amount[vote_id][reward_token] * _vecrv / (_vote.yea + _vecrv);
+            return reward_amount[vote_id][reward_token] * _ve / (_vote.yea + _ve);
         }
     }
 
     function _update_vote_state(uint vote_id, address reward_token) internal returns (uint) {
         vote.VoteData memory _vote = VOTE.getVote(vote_id);
         require(!_vote.is_open);
-        uint total_vecrv = _vote.yea + _vote.nay;
-        bool has_quorum = total_vecrv * 10**18 / _vote.voting_power > _vote.min_accept_quorum;
-        bool has_support = _vote.yea * 10**18 / total_vecrv > _vote.support_required;
+        uint total_ve = _vote.yea + _vote.nay;
+        bool has_quorum = total_ve * 10**18 / _vote.voting_power > _vote.min_accept_quorum;
+        bool has_support = _vote.yea * 10**18 / total_ve > _vote.support_required;
 
         if (has_quorum && has_support) {
             vote_states[vote_id][reward_token] = 1;
@@ -130,8 +131,8 @@ contract BribeV2Vote {
         require(VOTE.getVoterState(vote_id, claimant) == desired_vote);
         has_claimed[vote_id][reward_token][claimant] = true;
 
-        uint _vecrv = veCRV.balanceOf(claimant, _vote.start_date);
-        uint _amount = reward_amount[vote_id][reward_token] * _vecrv / yeas[vote_id];
+        uint _ve = VE.balanceOf(claimant, _vote.start_date);
+        uint _amount = reward_amount[vote_id][reward_token] * _ve / yeas[vote_id];
         _safeTransfer(reward_token, claimant, _amount);
         emit Bribe(claimant, vote_id, reward_token, _amount);
         return true;

@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-08-13
-*/
-
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
@@ -38,8 +34,13 @@ interface erc20 {
 contract BribeV2 {
     uint constant WEEK = 86400 * 7;
     uint constant PRECISION = 10**18;
-    GaugeController constant GAUGE = GaugeController(0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB);
-    ve constant VE = ve(0x5f3b5DfEb7B28CDbD7FAba78963EE202a494e2A2);
+    GaugeController GAUGE;
+    ve VE;
+
+    constructor(address _gaugeControllerAddress, address _veAddress){
+        GAUGE = GaugeController(_gaugeControllerAddress);
+        VE = ve(_veAddress);
+    }
 
     mapping(address => mapping(address => uint)) _claims_per_gauge;
     mapping(address => mapping(address => uint)) _reward_per_gauge;

@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-07-20
-*/
-
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
@@ -34,7 +30,11 @@ interface IERC20 {
 contract Bribe {
     uint constant WEEK = 86400 * 7;
     uint constant PRECISION = 10**18;
-    GaugeController constant GAUGE_CONTROLLER = GaugeController(0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB);
+    GaugeController GAUGE_CONTROLLER;
+
+    constructor(address _gaugeControllerAddress){
+        GAUGE_CONTROLLER = GaugeController(_gaugeControllerAddress);
+    }
 
     mapping(address => mapping(address => uint)) public active_period;
     mapping(address => mapping(address => uint)) public reward_per_token;
