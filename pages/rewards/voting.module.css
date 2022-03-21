@@ -139,6 +139,25 @@
   opacity: 1 !important;
 }
 
+.platFormChangeButton{
+  font: normal normal bold 68px/84px Poppins !important;
+  background: transparent;
+  border: none;
+  color: inherit;
+  box-shadow: inset 0 -3px 0 0;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.platFormChangeButton:hover{
+  box-shadow: inset 0 -6px 0 0;
+}
+/* .platFormChangeButton::after{
+  content:'';
+  height: .5rem;
+  width: .5rem;
+} */
+
 .addNetworkButton {
   width: fit-content;
   background: #FFFFFF 0% 0% no-repeat padding-box;

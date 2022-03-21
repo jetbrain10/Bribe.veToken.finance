@@ -14,6 +14,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { CONNECT_WALLET, CONFIGURE_RETURNED } from '../../stores/constants';
 
 import Unlock from '../unlock';
+import Platform from '../platform';
 
 import stores from '../../stores';
 import { formatAddress } from '../../utils';
@@ -74,9 +75,11 @@ const StyledSwitch = withStyles((theme) => ({
 
 function Header(props) {
   const accountStore = stores.accountStore.getStore('account');
-
+  const platform = stores.accountStore.getStore('platform');
+  const img = stores.accountStore.getStore('platformsAvailable')[platform].img
   const [account, setAccount] = useState(null);
   const [darkMode, setDarkMode] = useState(props.theme.palette.type === 'dark' ? true : false);
+  const [platFormPicker, setPlatFormPicker] = useState(false);
   const [unlockOpen, setUnlockOpen] = useState(false);
 
   useEffect(() => {
@@ -105,6 +108,10 @@ function Header(props) {
     props.changeTheme(val);
   };
 
+  const onPlatformClicked = () => {
+    setPlatFormPicker(!platFormPicker)
+  }
+
   const onAddressClicked = () => {
     setUnlockOpen(true);
   };
@@ -119,21 +126,27 @@ function Header(props) {
   }, []);
 
 
-  if(props.variant === 2) {
+  if (props.variant === 2) {
     return (
       <div className={classes.headerContainer2}>
         <Button
-          className={ classes.backButton }
+          className={classes.backButton}
           variant='outlined'
           onClick={props.backClicked}>
-          <Typography className={ classes.buttonText }>Back</Typography>
+          <Typography className={classes.buttonText}>Back</Typography>
         </Button>
-        <div className={ classes.space }>
+        <div className={classes.space}>
 
         </div>
+
+        <Button disableElevation className={classes.platformButton2} variant="contained" color="secondary" onClick={onPlatformClicked}>
+        <img src={img} className={ classes.protocolLogo}/><Typography variant="h5">{platform}</Typography>
+      </Button>
+      {platFormPicker && <Platform platFormPicker={platFormPicker} setPlatFormPicker={onPlatformClicked} className={darkMode ? 'dark':'light'} />}
+
         <Button disableElevation className={classes.accountButton2} variant='outlined' onClick={onAddressClicked}>
           {account && account.address && <div className={`${classes.accountIcon} ${classes.metamask}`}></div>}
-          <Typography className={ classes.buttonText }>{account && account.address ? formatAddress(account.address) : 'Connect Wallet'}</Typography>
+          <Typography className={classes.buttonText}>{account && account.address ? formatAddress(account.address) : 'Connect Wallet'}</Typography>
         </Button>
         {unlockOpen && <Unlock modalOpen={unlockOpen} closeModal={closeUnlock} />}
       </div>
@@ -150,6 +163,11 @@ function Header(props) {
           onChange={handleToggleChange}
         />
       </div>
+      <Button disableElevation className={classes.platformButton} variant="contained" color="secondary" onClick={onPlatformClicked}>
+        <img src={img} className={ classes.protocolLogo}/><Typography variant="h5">{platform}</Typography>
+      </Button>
+      {platFormPicker && <Platform platFormPicker={platFormPicker} setPlatFormPicker={onPlatformClicked} className={darkMode ? 'dark':'light'} />}
+
       <Button disableElevation className={classes.accountButton} variant="contained" color="secondary" onClick={onAddressClicked}>
         {account && account.address && <div className={`${classes.accountIcon} ${classes.metamask}`}></div>}
         <Typography variant="h5">{account && account.address ? formatAddress(account.address) : 'Connect Wallet'}</Typography>
