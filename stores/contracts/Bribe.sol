@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 interface GaugeController {
     struct VotedSlope {
         uint slope;
@@ -27,13 +29,15 @@ interface IERC20 {
     function approve(address spender, uint amount) external returns (bool);
 }
 
-contract Bribe {
+contract Bribe is Ownable {
     uint constant WEEK = 86400 * 7;
     uint constant PRECISION = 10**18;
+    uint8 public feePercentage;
     GaugeController GAUGE_CONTROLLER;
 
-    constructor(address _gaugeControllerAddress){
+    constructor(address _gaugeControllerAddress, uint8 _feePercentage){
         GAUGE_CONTROLLER = GaugeController(_gaugeControllerAddress);
+        set_fee_percentage(_feePercentage);
     }
 
     mapping(address => mapping(address => uint)) public active_period;
@@ -67,6 +71,7 @@ contract Bribe {
             if (_last_vote < _period) {
                 uint _slope = GAUGE_CONTROLLER.vote_user_slopes(user, gauge).slope;
                 _amount = _slope * reward_per_token[gauge][reward_token] / PRECISION;
+                _amount -= calculate_fee(_amount);
             }
         }
         return _amount;
@@ -90,6 +95,7 @@ contract Bribe {
                 uint _slope = GAUGE_CONTROLLER.vote_user_slopes(user, gauge).slope;
                 _amount = _slope * reward_per_token[gauge][reward_token] / PRECISION;
                 if (_amount > 0) {
+                    _amount -= calculate_fee(_amount);
                     _safeTransfer(reward_token, user, _amount);
                 }
             }
@@ -116,6 +122,15 @@ contract Bribe {
         (bool success, bytes memory data) =
         token.call(abi.encodeWithSelector(IERC20.transferFrom.selector, from, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))));
+    }
+
+    function set_fee_percentage(uint8 _feePercentage) public onlyOwner {
+        require(_feePercentage <= 15, 'Fee too high');
+        feePercentage = _feePercentage;
+    }
+
+    function calculate_fee(uint amount) public view returns (uint) {
+        return amount * (feePercentage/100);
     }
 
 }

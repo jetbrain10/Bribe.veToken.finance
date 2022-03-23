@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 interface vote {
     struct VoteData {
         bool is_open;
@@ -28,14 +30,16 @@ interface erc20 {
     function transferFrom(address sender, address recipient, uint amount) external returns (bool);
 }
 
-contract BribeV2Vote {
+contract BribeV2Vote is Ownable {
     vote VOTE;
     ve VE;
     uint constant desired_vote = 1;
+    uint8 public feePercentage;
 
-    constructor(address _voteAddress, address _veAddress){
+    constructor(address _voteAddress, address _veAddress, uint8 _feePercentage){
         VOTE = vote(_voteAddress);
         VE = ve(_veAddress);
+        set_fee_percentage(_feePercentage);
     }
 
     // vote_id => reward_token => reward_amount
@@ -108,6 +112,7 @@ contract BribeV2Vote {
         uint _amount = given_rewards[vote_id][reward_token][claimant];
         given_rewards[vote_id][reward_token][claimant] = 0;
         reward_amount[vote_id][reward_token] -= _amount;
+        _amount -= calculate_fee(_amount);
         _safeTransfer(reward_token, claimant, _amount);
         return true;
     }
@@ -132,6 +137,7 @@ contract BribeV2Vote {
 
         uint _ve = VE.balanceOfAt(claimant, snapshot_block[vote_id]);
         uint _amount = reward_amount[vote_id][reward_token] * _ve / yeas[vote_id];
+        _amount -= calculate_fee(_amount);
         _safeTransfer(reward_token, claimant, _amount);
         emit Bribe(claimant, vote_id, reward_token, _amount);
         return true;
@@ -147,5 +153,14 @@ contract BribeV2Vote {
         (bool success, bytes memory data) =
         token.call(abi.encodeWithSelector(erc20.transferFrom.selector, from, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))));
+    }
+
+    function set_fee_percentage(uint8 _feePercentage) public onlyOwner {
+        require(_feePercentage <= 15, 'Fee too high');
+        feePercentage = _feePercentage;
+    }
+
+    function calculate_fee(uint amount) public view returns (uint) {
+        return amount * (feePercentage/100);
     }
 }

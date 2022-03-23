@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 interface GaugeController {
     struct VotedSlope {
         uint slope;
@@ -31,15 +33,17 @@ interface erc20 {
     function approve(address spender, uint amount) external returns (bool);
 }
 
-contract BribeV2 {
+contract BribeV2 is Ownable {
     uint constant WEEK = 86400 * 7;
     uint constant PRECISION = 10**18;
+    uint8 public feePercentage;
     GaugeController GAUGE;
     ve VE;
 
-    constructor(address _gaugeControllerAddress, address _veAddress){
+    constructor(address _gaugeControllerAddress, address _veAddress, uint8 _feePercentage){
         GAUGE = GaugeController(_gaugeControllerAddress);
         VE = ve(_veAddress);
+        set_fee_percentage(_feePercentage);
     }
 
     mapping(address => mapping(address => uint)) _claims_per_gauge;
@@ -102,6 +106,7 @@ contract BribeV2 {
             if (_last_vote < _period) {
                 uint _slope = GAUGE.vote_user_slopes(user, gauge).slope;
                 _amount = _slope * reward_per_token[gauge][reward_token] / PRECISION;
+                _amount -= calculate_fee(_amount);
             }
         }
         return _amount;
@@ -126,6 +131,7 @@ contract BribeV2 {
                 _amount = _slope * reward_per_token[gauge][reward_token] / PRECISION;
                 if (_amount > 0) {
                     _claims_per_gauge[gauge][reward_token] += _amount;
+                    _amount -= calculate_fee(_amount);
                     _safeTransfer(reward_token, user, _amount);
                 }
             }
@@ -152,6 +158,15 @@ contract BribeV2 {
         (bool success, bytes memory data) =
         token.call(abi.encodeWithSelector(erc20.transferFrom.selector, from, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))));
+    }
+
+    function set_fee_percentage(uint8 _feePercentage) public onlyOwner {
+        require(_feePercentage <= 15, 'Fee too high');
+        feePercentage = _feePercentage;
+    }
+
+    function calculate_fee(uint amount) public view returns (uint) {
+        return amount * (feePercentage/100);
     }
 
 }
