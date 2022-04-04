@@ -264,6 +264,14 @@ class Store {
         return 'Polygon'
       case '4':
         return 'xDAI'
+      case '7':
+        return 'Arbitrum'
+      case '8':
+        return 'Avalanche'
+      case '9':
+        return 'Harmony'
+      case '10':
+        return 'Fundraising'
       default:
         return 'Unknown'
     }

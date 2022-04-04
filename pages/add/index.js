@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import { Typography, Paper, Button, CircularProgress, TextField, InputAdornment } from '@material-ui/core';
+import { Typography, Paper, Button, CircularProgress, TextField, InputAdornment, IconButton, Tooltip } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { withTheme, createTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import Layout from '../../components/layout/layout.js';
 import Header from '../../components/header';
 import SearchIcon from '@material-ui/icons/Search';
+import QuestionMarkIcon from '@material-ui/icons/HelpOutline';
 
 import classes from './add.module.css';
 
@@ -194,6 +195,11 @@ function Voting({ changeTheme, theme }) {
                     <div className={ classes.poolRow }>
                       <img src={ gauge.logo } alt='' width='40px' height='40px' className={ classes.assetIcon } />
                       <Typography className={ classes.nameText }>{gauge.name}</Typography>
+                      <Tooltip title={gauge.gaugeAddress}>
+                        <IconButton href={`https://etherscan.io/address/${gauge.gaugeAddress}`} target="_blank">
+                          <QuestionMarkIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </div>
                     <div className={ classes.typeRow }>
                       <Typography className={ chainClass }>{gauge.gaugeTypeName}</Typography>
