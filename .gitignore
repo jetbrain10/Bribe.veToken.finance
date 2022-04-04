@@ -12,8 +12,17 @@
 /.next/
 /out/
 
+# project files
+.idea
+
 # production
 /build
+
+# artifacts
+/artifacts
+
+# cache
+/cache
 
 # misc
 .DS_Store
