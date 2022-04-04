@@ -30,7 +30,7 @@ interface erc20 {
     function transferFrom(address sender, address recipient, uint amount) external returns (bool);
 }
 
-contract BribeV2Vote is Ownable {
+contract BribeV2VoteRBN is Ownable {
     vote VOTE;
     ve VE;
     uint constant desired_vote = 1;
