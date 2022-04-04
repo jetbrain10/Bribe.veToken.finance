@@ -30,6 +30,7 @@ const searchTheme = createTheme({
   },
   typography: {
     fontFamily: [
+      'Poppins',
       'Inter',
       'Arial',
       '-apple-system',
@@ -181,7 +182,7 @@ function Voting({ changeTheme, theme }) {
   return (
     <Layout changeTheme={changeTheme}>
       <div className={ classes.container }>
-        <div className={ classes.headContainer }>
+      <div className={ theme.palette.type === 'dark' ? classes.headContainerDark : classes.headContainer }>
           <div className={ classes.headContainerContent }>
             <Header changeTheme={ changeTheme } variant={2} backClicked={ onBackClicked }/>
             <Typography className={ classes.selectPool }>Define the Reward</Typography>

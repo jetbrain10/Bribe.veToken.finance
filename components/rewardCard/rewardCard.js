@@ -20,6 +20,7 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: [
+      'Poppins',
       'Inter',
       'Arial',
       '-apple-system',
@@ -45,7 +46,12 @@ const theme = createTheme({
       containedPrimary: {
         backgroundColor: '#fff',
         color: '#000'
-      }
+      },
+    },
+    MuiPaper: {
+      root: {
+        "box-shadow": '7px red !important;',
+      },
     },
     MuiFormControlLabel: {
       root: {

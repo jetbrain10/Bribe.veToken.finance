@@ -250,8 +250,9 @@ function MyComponent(props) {
               style={{
                 width: '220px',
                 height: '220px',
-                borderBottom: '3px solid #0048FF',
-                borderRadius: '30px',
+                boxShadow: '0 5px 20px -10px #000',
+                // borderBottom: '3px solid #0048FF',
+                borderRadius: '15px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -284,17 +285,17 @@ function MyComponent(props) {
                   alt=""
                 />
                 <Typography style={{
-                  font: 'normal normal bold 18px/21px Inter !important',
+                  font: 'normal normal bold 18px/21px Poppins !important',
                   letterSpacing: '-0.36px',
-                  fontFamily: 'Inter',
+                  fontFamily: 'Poppins',
                   fontWeight: 'bold',
                   fontSize: '18px',
                   marginTop: '10px',
                   marginBottom: '10px',
                 }}>{display}</Typography>
                 <Typography style={{
-                  font: 'normal normal 300 13px/16px Inter !important',
-                  fontFamily: 'Inter',
+                  font: 'normal normal 300 13px/16px Poppins !important',
+                  fontFamily: 'Poppins',
                   fontWeight: '300',
                   fontSize: '13px',
                   lineHeight: '1.2',
