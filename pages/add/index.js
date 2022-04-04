@@ -151,7 +151,7 @@ function Voting({ changeTheme, theme }) {
                       </Typography>
                     </InputAdornment>
                   }}
-                /> 
+                />
               </Paper>
             {/* </ThemeProvider> */}
           </div>
@@ -181,13 +181,33 @@ function Voting({ changeTheme, theme }) {
 
                 return true
               }).map((gauge) => {
-                let chainClass = classes.typeText
-                if(gauge.gaugeTypeName === 'Fantom') {
-                  chainClass = classes.typeTextFantom
-                } else if(gauge.gaugeTypeName === 'Polygon') {
-                  chainClass = classes.typeTextPolygon
-                } else if(gauge.gaugeTypeName === 'xDAI') {
-                  chainClass = classes.typeTextXDAI
+                let chainClass;
+
+                switch(gauge.gaugeTypeName){
+                  case 'Fantom':
+                    chainClass = classes.typeTextFantom
+                    break;
+                  case 'Polygon':
+                    chainClass = classes.typeTextPolygon
+                    break;
+                  case 'xDAI':
+                    chainClass = classes.typeTextXDAI
+                    break;
+                  case 'Arbitrum':
+                    chainClass = classes.typeTextArbitrum
+                    break;
+                  case 'Avalanche':
+                    chainClass = classes.typeTextAvalanche
+                    break;
+                  case 'Harmony':
+                    chainClass = classes.typeTextHarmony
+                    break;
+                  case 'Fundraising':
+                    chainClass = classes.typeTextFundraising
+                    break;
+                  default:
+                    chainClass = classes.typeText
+                    break;
                 }
 
 

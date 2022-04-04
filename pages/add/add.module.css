@@ -176,6 +176,42 @@
   color: #fff;
 }
 
+.typeTextArbitrum {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #dd00ff;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
+.typeTextAvalanche {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #e74141;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
+.typeTextHarmony {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #ababab;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
+.typeTextFundraising {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #ff7301;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
 .buttonText {
   font-size: 12px !important;
 }
