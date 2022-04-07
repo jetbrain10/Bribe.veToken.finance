@@ -8,7 +8,7 @@ import { withTheme, createTheme, ThemeProvider } from '@material-ui/core/styles'
 import Layout from '../../components/layout/layout.js';
 import Header from '../../components/header';
 import SearchIcon from '@material-ui/icons/Search';
-import QuestionMarkIcon from '@material-ui/icons/HelpOutline';
+import CopyIcon from '@material-ui/icons/FileCopyOutlined';
 
 import classes from './add.module.css';
 
@@ -122,6 +122,12 @@ function Voting({ changeTheme, theme }) {
     router.push(`/`);
   }
 
+  const onTooltipClicked = (gaugeAddress) => {
+    navigator.clipboard.writeText(gaugeAddress).then(res=>{
+      console.log("Address copied to clipboard!");
+    })
+  }
+
   return (
     <Layout changeTheme={changeTheme}>
       <div className={ classes.container }>
@@ -216,9 +222,9 @@ function Voting({ changeTheme, theme }) {
                     <div className={ classes.poolRow }>
                       <img src={ gauge.logo } alt='' width='40px' height='40px' className={ classes.assetIcon } />
                       <Typography className={ classes.nameText }>{gauge.name}</Typography>
-                      <Tooltip title={gauge.gaugeAddress}>
-                        <IconButton href={`https://etherscan.io/address/${gauge.gaugeAddress}`} target="_blank">
-                          <QuestionMarkIcon fontSize="small" />
+                      <Tooltip title="Copy address to clipboard">
+                        <IconButton style={{color: '#b1b6c1'}} onClick={ () => { onTooltipClicked(gauge.gaugeAddress) }}>
+                          <CopyIcon style={{fontSize: 18}} />
                         </IconButton>
                       </Tooltip>
                     </div>

@@ -142,7 +142,7 @@ function Header(props) {
         <Button disableElevation className={classes.platformButton2} variant="contained" color="secondary" onClick={onPlatformClicked}>
         <img src={img} className={ classes.protocolLogo}/><Typography variant="h5">{platform}</Typography>
       </Button>
-      {platFormPicker && <Platform platFormPicker={platFormPicker} setPlatFormPicker={onPlatformClicked} className={darkMode ? 'dark':'light'} />}
+      {/*{platFormPicker && <Platform platFormPicker={platFormPicker} setPlatFormPicker={onPlatformClicked} className={darkMode ? 'dark':'light'} />}*/}
 
         <Button disableElevation className={classes.accountButton2} variant='outlined' onClick={onAddressClicked}>
           {account && account.address && <div className={`${classes.accountIcon} ${classes.metamask}`}></div>}

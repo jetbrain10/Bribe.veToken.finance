@@ -242,7 +242,7 @@ class Store {
             name = 'Ftm.curve.fi fUSDT/wBTC/wETH (fUSDT + wBTC + wETH)'
             break;
           case '0xB504b6EB06760019801a91B451d3f7BD9f027fC9':
-            name = 'Avax.urve.fi aDAI/aUSDC/aUSDT (aDAI + aUSDC + aUSDT)'
+            name = 'Avax.curve.fi aDAI/aUSDC/aUSDT (aDAI + aUSDC + aUSDT)'
             break;
           case '0x75D05190f35567e79012c2F0a02330D3Ed8a1F74':
             name = 'Avax.curve.fi wBTC.e/renBTC.e (wBTC.e + renBTC.e)'
