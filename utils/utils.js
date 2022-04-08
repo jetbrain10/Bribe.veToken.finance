@@ -68,3 +68,36 @@ export function sqrt(value) {
 
   return newtonIteration(value, 1n)
 }
+
+export function convertToInternationalCurrencySystem (labelValue) {
+
+  // Nine Zeroes for Billions
+  return Math.abs(Number(labelValue)) >= 1.0e+9
+
+  ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2) + "B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(labelValue)) >= 1.0e+6
+
+  ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2) + "M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(labelValue)) >= 1.0e+3
+
+  ? (Math.abs(Number(labelValue)) / 1.0e+3).toFixed(2) + "K"
+
+  : Math.abs(Number(labelValue)).toFixed(2);
+
+}
+export const tokenOracle= async (tokens)=>{
+  let url = 'https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses='
+  for(let i = 0;i < tokens.length;i++){
+      url += tokens[i]
+      if(i + 1 < tokens.length){
+          url += ','
+      }
+  }
+  url += '&vs_currencies=usd'
+  const response = await fetch(url);
+  const body = await response.json();
+
+  return body;
+}

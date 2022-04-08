@@ -1,0 +1,216 @@
+.container {
+
+}
+
+.headContainer {
+  background: radial-gradient(ellipse at top left, #bb80ff 20%, transparent),
+    radial-gradient(ellipse at right, #008cff, transparent),
+    radial-gradient(ellipse at bottom, #00a782, transparent),
+    linear-gradient(rgb(205, 217, 255), rgb(83, 152, 255));}
+    .headContainerDark{
+      background: radial-gradient(ellipse at top left, #530196 20%, transparent),
+      radial-gradient(ellipse at right, #0c8e9f, transparent),
+      radial-gradient(ellipse at bottom, #00051f, transparent),
+      linear-gradient(rgb(0, 15, 65), rgb(0, 102, 255));
+    }
+    .headContainer, .headContainerDark{
+  position: relative;
+  z-index: 9;
+  position: sticky;
+  top: 0px;
+  padding: 20px;
+  background-size: cover;
+}
+
+.headContainerContent {
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.selectPool {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem !important;
+  font-weight: 800;
+  /* letter-spacing: 2.88px !important; */
+  color: #FFFFFF !important;
+  padding-bottom: 12px;
+  padding-top: 12px;
+}
+
+.choosePool {
+  text-align: center !important;
+  font: normal normal 300 17px/20px Poppins !important;
+  letter-spacing: -0.34px !important;
+  color: #FFFFFF !important;
+  padding-bottom: 100px;
+}
+
+.searchField {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  max-width: 1200px;
+}
+.searchField > div > div > div{
+  padding: .6rem 2rem;
+}
+.gridField{
+  background-clip: content-box;
+  background-color: black;
+}
+
+.searchInputAdnornment {
+  font: normal normal bold 16px/35px Poppins !important;
+  letter-spacing: 0px;
+}
+
+.tableHeader {
+  padding-top: 32px;
+  background: #f4f5f8;
+  position: sticky;
+  top: 226px;
+  z-index: 8;
+}
+
+.tableHeaderDark {
+  padding-top: 32px;
+  background: #1C253C;
+  position: sticky;
+  top: 226px;
+  z-index: 8;
+}
+
+.tableHeaderRow {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0px;
+}
+
+.tableHeaderText {
+  font: normal normal bold 14px/35px Poppins !important;
+  letter-spacing: 0px !important;
+  color: #707786 !important;
+  opacity: 0.6;
+}
+
+.typeRow {
+  width: 200px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.poolRow {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.assetIcon {
+  margin-right: 24px;
+}
+
+.actionRow {
+  width: 200px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.tableRow {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0px;
+  border-bottom: 1px solid #B1B6C1;
+}
+
+.chooseButton {
+
+}
+
+.nameText {
+  text-align: left;
+  font: normal normal bold 20px/35px Poppins !important;
+  letter-spacing: 0px;
+}
+
+.rowText {
+  font: normal normal bold 16px/35px Poppins !important;
+  letter-spacing: 0px;
+}
+
+.typeText {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #b1b6c1;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
+.typeTextFantom {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #1969ff;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
+.typeTextPolygon {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #8247e5;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
+.typeTextXDAI {
+  font: normal normal bold 12px/23px Poppins !important;
+  background: #62a7a5;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 0px 12px;
+  color: #fff;
+}
+
+.buttonText {
+  font-size: 12px !important;
+}
+
+.poolHeaderText {
+  padding-left: 64px
+}
+
+.bar {
+  background: #dedede;
+  width: 90%;
+  height: 16px;
+  position: relative;
+  border-radius: 100px;
+}
+
+.yeas {
+  background: #32da67;
+  height: 100%;
+  width: 0%;
+  border-radius: 100px;
+}
+
+.quorumRequired {
+  border-right: 1px solid black;
+  position: absolute;
+  top: 0px;
+  height: 100%;
+}
