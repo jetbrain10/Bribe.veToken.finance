@@ -85,6 +85,7 @@ function Voting({ changeTheme, theme }) {
   const router = useRouter();
   const weekID = router.query.weekID;
 
+  const barColors = ["#1f77b4", "#ff7f0e", "#2ca02c"]
 
   const onConnectWallet = () => {
     stores.emitter.emit(CONNECT_WALLET);
@@ -201,7 +202,7 @@ const query = gql`
       return b.total-a.total
   })
     return (
-      <Box justifyContent='center' display='flex' bgcolor='#141C2F' padding={4} fullWidth borderRadius={10}>
+      <Box justifyContent='center' display='flex' bgcolor={theme.palette.type === 'dark' ? "#141C2F":"#fff"} padding={4} fullWidth borderRadius={10}>
     <ResponsiveContainer width="90%" height={250}>
   <BarChart
       data={chartData}
@@ -216,7 +217,11 @@ const query = gql`
      <CartesianGrid strokeDasharray="6" vertical={false}/> <XAxis dataKey="symbol"  />
       <YAxis />
       <Tooltip cursor={false}  />
-      <Bar maxBarSize={30}  dataKey="total" fill="#8884d8" />
+      <Bar maxBarSize={30}  dataKey="total" fill="#8884d8" > {
+                        chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={barColors[index % 20]} />
+                        ))
+                    }</Bar>
     </BarChart>
     </ResponsiveContainer >
   </Box>
@@ -243,7 +248,7 @@ const query = gql`
               {
           weekData ?
           (
-          <Box bgcolor="#141C2F"   borderRadius={10}>
+          <Box bgcolor={theme.palette.type === 'dark' ? "#141C2F":"#fff"}   borderRadius={10} borderColor="#141C2F">
             <Grid container justifyContent='center' display='flex' >
             <Grid item xs='4' align="center" >
                   <Typography align="center" className={ classes.nameText }>{moment.unix(weekData.timestamp).format("MMMM Do YYYY")}</Typography>
