@@ -10,6 +10,7 @@
     "start": "next start -p $PORT"
   },
   "dependencies": {
+    "@apollo/client": "^3.5.10",
     "@danah/react-hook-scrollto": "^1.0.10",
     "@date-io/date-fns": "^2.11.0",
     "@ethersproject/providers": "^5.4.1",
@@ -28,6 +29,7 @@
     "bignumber.js": "^9.0.1",
     "date-fns": "^2.22.1",
     "flux": "^4.0.1",
+    "graphql": "^16.3.0",
     "moment": "^2.29.1",
     "next": "^10.2.3",
     "node-fetch": "^2.6.1",
@@ -36,8 +38,6 @@
     "react-dom": "17.0.1",
     "recharts": "^2.0.10",
     "web3": "^1.4.0",
-    "web3-batch-call": "^1.0.12",
-    "graphql": "^16.3.0",
-    "@apollo/client": "^3.5.10"
+    "web3-batch-call": "^1.0.12"
   }
 }

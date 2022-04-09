@@ -85,7 +85,6 @@ function Voting({ changeTheme, theme }) {
     stores.emitter.emit(CONNECT_WALLET);
   };
 
-
   const client = useMemo(
     () =>
       new ApolloClient({
@@ -95,7 +94,8 @@ function Voting({ changeTheme, theme }) {
     [gaugeGraphUrl],
   );
   
-const query = gql`
+  
+  const query = gql`
      {
         weeks(orderBy: id, orderDirection: desc) {
         id
@@ -111,6 +111,7 @@ const query = gql`
         }
       }
     `;
+    
   const { data, loading, error, refetch } = useQuery(query, { client });
   const [weeklyData, setWeeklyData] = useState()
   const getTokenPrices = async () =>{
@@ -126,7 +127,7 @@ const query = gql`
   }
   useEffect(async () => {
     if(data){
-        const prices =await  getTokenPrices();
+        const prices = await getTokenPrices();
         let newWeeklyData = []
         for(let week of data.weeks){
             const weekData = {
@@ -143,8 +144,6 @@ const query = gql`
             }
             newWeeklyData.push(weekData)
         }
-        console.log(newWeeklyData)
-
         setWeeklyData(newWeeklyData)
     }
   
@@ -208,8 +207,7 @@ const query = gql`
                     </div>
                    
                     <div className={ classes.typeRow }>
-               
-                      <Typography >${ vecrv }</Typography>
+                      <Typography >${vecrv}</Typography>
                     </div>
                     <div className={ classes.typeRow }>
                       <Typography >${rewards}</Typography>

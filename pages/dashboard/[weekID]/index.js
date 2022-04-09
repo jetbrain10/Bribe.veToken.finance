@@ -16,9 +16,9 @@ import stores from '../../../stores/index.js';
 import {  CONNECT_WALLET } from '../../../stores/constants';
 
 
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { gaugeGraphUrl } from '../../../utils/constants.js';
-import { convertToInternationalCurrencySystem, tokenOracle } from '../../../utils/utils.js';
+import { convertToInternationalCurrencySystem, getGaugeSymbol, getManualGaugeName, tokenOracle } from '../../../utils/utils.js';
 
 
 const searchTheme = createTheme({
@@ -114,6 +114,7 @@ const query = gql`
             gauge{
               id
               name
+              symbol
             }
             totalUserBalance
             weeklyClaimedRewards
@@ -143,8 +144,7 @@ const query = gql`
                 timestamp: Number(data.week.timestamp),
                 vecrv: 0,
                 rewards: 0,
-                stats:{},
-                rewardTokenData:{}
+                stats:{}
             }
             var stats = {}
             for(let stat of data.week.stats){
@@ -155,24 +155,24 @@ const query = gql`
                     rewards : 0,
                     vecrv : 0,
                     name : '',
+                    symbol : '',
                   }
                 }
                 
-                if(!weekData.rewardTokenData[stat.token.id]){
-                  weekData.rewardTokenData[stat.token.id] = {
-                    name: stat.token.name,
-                    value: 0
-                  }  
-                }
+                
                 stats[stat.gauge.id]['rewards'] += rewardUSD
                 stats[stat.gauge.id]['vecrv'] += (rewardUSD/(balance/(10 ** 18)))
                 stats[stat.gauge.id]['name'] = stat.gauge.name
+                stats[stat.gauge.id]['symbol'] = stat.gauge.symbol
+
                 if(stat.gauge.name == ''){
                   stats[stat.gauge.id]['name'] = getManualGaugeName(stat.gauge.id)
-                  console.log(stat.gauge.id)
+                }
+
+                if(stat.gauge.symbol == ''){
+                  stats[stat.gauge.id]['symbol'] = getGaugeSymbol(stat.gauge.id)
                 }
                 
-                weekData.rewardTokenData[stat.token.id].value += Number(rewardUSD.toFixed(2))
                 weekData.rewards += stats[stat.gauge.id]['rewards']
                 weekData.vecrv += stats[stat.gauge.id]['vecrv']
             }
@@ -183,43 +183,6 @@ const query = gql`
    
   }, [data])
 
-  const getManualGaugeName=(gaugeAddress)=>{
-    let name = ''
-    switch (gaugeAddress) {
-      case '0xb9c05b8ee41fdcbd9956114b3af15834fdedcb54':
-        name = 'Curve.fi DAI/USDC (DAI+USDC)'
-        break;
-      case '0xfe1a3dd8b169fb5bf0d5dbfe813d956f39ff6310':
-        name = 'Curve.fi fUSDT/DAI/USDC'
-        break;
-      case '0xc48f4653dd6a9509de44c92beb0604bea3aee714':
-        name = 'Curve.fi amDAI/amUSDC/amUSDT'
-        break;
-      case '0x6955a55416a06839309018a8b0cb72c4ddc11f15':
-        name = 'Curve.fi USD-BTC-ETH'
-        break;
-      case '0x488e6ef919c2bb9de535c634a80afb0114da8f62':
-        name = 'Curve.fi amWBTC/renBTC'
-        break;
-      case '0xfdb129ea4b6f557b07bcdcede54f665b7b6bc281':
-        name = 'Curve.fi WBTC/renBTC'
-        break;
-      case '0x060e386ecfbacf42aa72171af9efe17b3993fc4f':
-        name = 'Curve USD-BTC-ETH'
-        break;
-      case '0x6c09f6727113543fd061a721da512b7efcdd0267':
-        name = 'Curve.fi wxDAI/USDC/USDT'
-        break;
-      case '0xdefd8fdd20e0f34115c7018ccfb655796f6b2168':
-        name = 'Curve.fi USD-BTC-ETH'
-        break;
-      case '0xd8b712d29381748db89c36bca0138d7c75866ddf':
-        name = 'Curve.fi Factory USD Metapool: Magic Internet Money 3Pool'
-        break;
-      default:
-    }
-    return name
-  }
 
   const onChoose = (weekId) => {
     router.push(`/dashboard/${weekId}`);
@@ -232,15 +195,15 @@ const query = gql`
     if(!weekData){
       return null
     }
-    const chartData = Object.entries(weekData.rewardTokenData).map(([k, v])=>{
-      console.log(v)
-      return {name: v.name, value: Number(v.value)}
-    })
-    console.log(chartData)
+    const chartData = Object.entries(weekData.stats).map(([k, v])=>{
+      return {symbol: v.symbol, total: Number(v.rewards.toFixed(2))}
+    }).sort(function(a,b) {
+      return b.total-a.total
+  })
     return (
-      <BarChart
-      width={500}
-      height={300}
+      <Box justifyContent='center' display='flex' bgcolor='#141C2F' padding={4} fullWidth borderRadius={10}>
+    <ResponsiveContainer width="90%" height={250}>
+  <BarChart
       data={chartData}
       margin={{
         top: 5,
@@ -248,13 +211,15 @@ const query = gql`
         left: 20,
         bottom: 5,
       }}
+      className={ classes.chart }
     >
-      <XAxis dataKey="name" />
+     <CartesianGrid strokeDasharray="6" vertical={false}/> <XAxis dataKey="symbol"  />
       <YAxis />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="value" fill="#8884d8" />
+      <Tooltip cursor={false}  />
+      <Bar maxBarSize={30}  dataKey="total" fill="#8884d8" />
     </BarChart>
+    </ResponsiveContainer >
+  </Box>
     )
   }
 
@@ -264,16 +229,22 @@ const query = gql`
       <div className={ theme.palette.type === 'dark' ? classes.headContainerDark : classes.headContainer }>
           <div className={ classes.headContainerContent }>
             <Header changeTheme={ changeTheme } variant={2} backClicked={ onBackClicked }/>
-            <Typography className={ classes.selectPool }>Detailed Report</Typography>
+            <Typography className={ classes.choosePool }></Typography>
+            <Typography className={ classes.choosePool }></Typography>
+            <Typography className={ classes.choosePool }></Typography>
             <Typography className={ classes.choosePool }></Typography>
           </div>
           
           <div className={ classes.searchField }>
+            {dataChart()}
+
+            <Box  sx={{ py: 1 }}></Box>
               <Paper className={ classes.searchPaper }>
               {
           weekData ?
           (
-          <Grid container justifyContent='center' display='flex' >
+          <Box bgcolor="#141C2F"   borderRadius={10}>
+            <Grid container justifyContent='center' display='flex' >
             <Grid item xs='4' align="center" >
                   <Typography align="center" className={ classes.nameText }>{moment.unix(weekData.timestamp).format("MMMM Do YYYY")}</Typography>
                   Start
@@ -287,26 +258,9 @@ const query = gql`
                   $/veCRV
             </Grid>
           </Grid>
+          </Box>
           ):null
-        }
-                <TextField
-                  fullWidth
-                  className={ classes.searchContainer }
-                  variant="outlined"
-                  placeholder="3Pool, IronBank"
-                  value={ search }
-                  onChange={ onSearchChanged }
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">
-                      <SearchIcon fontSize="medium"  />
-                    </InputAdornment>,
-                    startAdornment: <InputAdornment position="start">
-                      <Typography className={ classes.searchInputAdnornment }>
-                        Search Pools:
-                      </Typography>
-                    </InputAdornment>
-                  }}
-                /> 
+        }    
               </Paper>
           </div>
      

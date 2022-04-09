@@ -16,10 +16,10 @@
     .headContainer, .headContainerDark{
   position: relative;
   z-index: 9;
-  position: sticky;
   top: 0px;
   padding: 20px;
   background-size: cover;
+  /* height: 500px; */
 }
 
 .headContainerContent {
@@ -49,6 +49,10 @@
   color: #FFFFFF !important;
   padding-bottom: 100px;
 }
+.chart{
+  width: 100%;
+  max-width: 1200px;
+}
 
 .searchField {
   position: absolute;
@@ -74,7 +78,6 @@
 .tableHeader {
   padding-top: 32px;
   background: #f4f5f8;
-  position: sticky;
   top: 226px;
   z-index: 8;
 }
@@ -82,7 +85,6 @@
 .tableHeaderDark {
   padding-top: 32px;
   background: #1C253C;
-  position: sticky;
   top: 226px;
   z-index: 8;
 }
@@ -156,6 +158,9 @@
   width: fit-content;
   padding: 0px 12px;
   color: #fff;
+}
+.detailsContainer{
+  background:#141C2F;
 }
 
 .typeTextFantom {
