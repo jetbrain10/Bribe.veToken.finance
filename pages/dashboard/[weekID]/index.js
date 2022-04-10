@@ -215,7 +215,7 @@ const query = gql`
       className={ classes.chart }
     >
      <CartesianGrid strokeDasharray="6" vertical={false}/> <XAxis dataKey="symbol"  />
-      <YAxis />
+      <YAxis tickFormatter={convertToInternationalCurrencySystem}/>
       <Tooltip cursor={false}  />
       <Bar maxBarSize={30}  dataKey="total" fill="#8884d8" > {
                         chartData.map((entry, index) => (
@@ -234,10 +234,6 @@ const query = gql`
       <div className={ theme.palette.type === 'dark' ? classes.headContainerDark : classes.headContainer }>
           <div className={ classes.headContainerContent }>
             <Header changeTheme={ changeTheme } variant={2} backClicked={ onBackClicked }/>
-            <Typography className={ classes.choosePool }></Typography>
-            <Typography className={ classes.choosePool }></Typography>
-            <Typography className={ classes.choosePool }></Typography>
-            <Typography className={ classes.choosePool }></Typography>
           </div>
           
           <div className={ classes.searchField }>

@@ -18,8 +18,8 @@
   z-index: 9;
   top: 0px;
   padding: 20px;
-  background-size: cover;
-  /* height: 500px; */
+  /* background-size: cover; */
+  height: 500px;
 }
 
 .headContainerContent {

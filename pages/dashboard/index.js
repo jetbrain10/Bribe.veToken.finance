@@ -15,6 +15,7 @@ import stores from '../../stores/index.js';
 import {  CONNECT_WALLET } from '../../stores/constants';
 import { gaugeGraphUrl } from '../../utils/constants.js';
 import { convertToInternationalCurrencySystem, tokenOracle } from '../../utils/utils.js';
+import { Area, Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 
 const searchTheme = createTheme({
@@ -142,6 +143,7 @@ function Voting({ changeTheme, theme }) {
                 weekData.rewards += rewardUSD
                 weekData.vecrv += (rewardUSD/(balance/(10 ** 18)))
             }
+            weekData.vecrv = weekData.vecrv.toFixed(2)
             newWeeklyData.push(weekData)
         }
         setWeeklyData(newWeeklyData)
@@ -149,7 +151,39 @@ function Voting({ changeTheme, theme }) {
   
    
   }, [data])
-  
+  const dataChart = ()=>{
+    if(!weeklyData){
+      return null
+    }
+    const chartData = weeklyData
+   chartData.map(weekData =>{
+      weekData.date= moment.unix(weekData.timestamp).format("DD/MM/YY")
+    })
+    return (
+      <Box justifyContent='center' display='flex' bgcolor={theme.palette.type === 'dark' ? "#141C2F":"#fff"} padding={4} fullWidth borderRadius={10}>
+    <ResponsiveContainer width="100%" height={250}>
+  <ComposedChart
+      data={chartData}
+      margin={{
+        top: 5,
+        right: 30,
+        left: 20,
+        bottom: 5,
+      }}
+      className={ classes.chart }
+    >
+     <CartesianGrid strokeDasharray="6" vertical={false}/> <XAxis  interval={0}  dataKey="date" verticalAnchor= "start" fontSize={14} angle={-45} textAnchor='end' height={75}/>
+     <YAxis yAxisId={1}   orientation="right"/>
+      <YAxis yAxisId={2} tickFormatter={convertToInternationalCurrencySystem}/>
+      <Tooltip cursor={false}  />
+      <Line yAxisId={1} type="monotone" dataKey="vecrv" stroke="#8884d8" />
+      <Bar yAxisId={2} maxBarSize={30}  dataKey="rewards" fill="#8884d8" />
+    </ComposedChart>
+    </ResponsiveContainer >
+  </Box>
+    )
+  }
+
   const onChoose = (weekId) => {
     router.push(`/dashboard/${weekId}`);
   }
@@ -166,6 +200,10 @@ function Voting({ changeTheme, theme }) {
             <Header changeTheme={ changeTheme } variant={2} backClicked={ onBackClicked }/>
             <Typography className={ classes.selectPool }>Weekly Reports</Typography>
             <Typography className={ classes.choosePool }>Click to see the report in detail</Typography>
+          </div>
+          <div className={ classes.searchField }>
+          {dataChart()}
+
           </div>
         </div>
         <div>
@@ -197,7 +235,7 @@ function Voting({ changeTheme, theme }) {
             { weeklyData && weeklyData.length > 0 &&
               weeklyData.map((weekData) => {
                 let date = moment.unix(weekData.timestamp).format("MMMM Do YYYY")
-                let vecrv = weekData.vecrv.toPrecision(2)
+                let vecrv = weekData.vecrv
                 let rewards = convertToInternationalCurrencySystem(weekData.rewards)
                 return (
                   <div className={ classes.tableRow }>
