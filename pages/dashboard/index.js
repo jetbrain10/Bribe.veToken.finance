@@ -106,6 +106,9 @@ function Voting({ changeTheme, theme }) {
               id
               decimals
             }
+            gauge{
+              id
+            }
             totalUserBalance
             weeklyClaimedRewards
           }
@@ -137,12 +140,24 @@ function Voting({ changeTheme, theme }) {
                 vecrv: 0,
                 rewards: 0 
             }
+            let veCRVTotal = 0
+            var stats = {}
             for(let stat of week.stats){
                 const balance = Number(stat.totalUserBalance)
                 const rewardUSD = (Number(stat.weeklyClaimedRewards) / (10 ** Number(stat.token.decimals)))  * Number(prices[stat.token.id] ? prices[stat.token.id]['usd']:  '0')
-                weekData.rewards += rewardUSD
-                weekData.vecrv += (rewardUSD/(balance/(10 ** 18)))
+                if(!stats[stat.gauge.id]){
+                  stats[stat.gauge.id] = {
+                    rewards : 0,
+                    vecrv : 0,
+                  }
+                }
+                stats[stat.gauge.id]['rewards'] += Number(rewardUSD.toFixed(2))
+                stats[stat.gauge.id]['vecrv'] += balance == 0 || rewardUSD == 0 ?0 :(rewardUSD/(balance/(10 ** 18)))
+
+                weekData.rewards += stats[stat.gauge.id]['rewards']
+                veCRVTotal += stats[stat.gauge.id]['vecrv'] * stats[stat.gauge.id]['rewards']
             }
+            weekData.vecrv = veCRVTotal/weekData.rewards
             weekData.vecrv = weekData.vecrv.toFixed(2)
             newWeeklyData.push(weekData)
         }
@@ -173,11 +188,11 @@ function Voting({ changeTheme, theme }) {
       className={ classes.chart }
     >
      <CartesianGrid strokeDasharray="6" vertical={false}/> <XAxis  interval={0}  dataKey="date" verticalAnchor= "start" fontSize={14} angle={-45} textAnchor='end' height={75}/>
-     <YAxis yAxisId={1}   orientation="right"/>
-      <YAxis yAxisId={2} tickFormatter={convertToInternationalCurrencySystem}/>
+     <YAxis yAxisId={1}   scale="log" domain={['auto', 'auto']}  orientation="right"/>
+      <YAxis yAxisId={2}  tickFormatter={convertToInternationalCurrencySystem}/>
       <Tooltip cursor={false}  />
-      <Line yAxisId={1} type="monotone" dataKey="vecrv" stroke="#8884d8" />
       <Bar yAxisId={2} maxBarSize={30}  dataKey="rewards" fill="#8884d8" />
+      <Line  yAxisId={1} type="monotone" dataKey="vecrv" stroke="#E3C565"  activeDot={{ r: 2 }} strokeWidth={2} strokeDasharray="2"  />
     </ComposedChart>
     </ResponsiveContainer >
   </Box>

@@ -148,9 +148,11 @@ const query = gql`
                 stats:{}
             }
             var stats = {}
+            let veCRVTotal = 0
             for(let stat of data.week.stats){
                 const balance = Number(stat.totalUserBalance)
                 const rewardUSD = (Number(stat.weeklyClaimedRewards) / (10 ** Number(stat.token.decimals)))  * Number(prices[stat.token.id] ? prices[stat.token.id]['usd']:  '0')
+               if(!(balance == 0 || rewardUSD == 0 )){
                 if(!stats[stat.gauge.id]){
                   stats[stat.gauge.id] = {
                     rewards : 0,
@@ -159,10 +161,9 @@ const query = gql`
                     symbol : '',
                   }
                 }
-                
-                
-                stats[stat.gauge.id]['rewards'] += rewardUSD
-                stats[stat.gauge.id]['vecrv'] += (rewardUSD/(balance/(10 ** 18)))
+
+                stats[stat.gauge.id]['rewards'] += Number(rewardUSD.toFixed(2))
+                stats[stat.gauge.id]['vecrv'] += balance == 0 || rewardUSD == 0 ?0 :(rewardUSD/(balance/(10 ** 18)))
                 stats[stat.gauge.id]['name'] = stat.gauge.name
                 stats[stat.gauge.id]['symbol'] = stat.gauge.symbol
 
@@ -175,10 +176,11 @@ const query = gql`
                 }
                 
                 weekData.rewards += stats[stat.gauge.id]['rewards']
-                weekData.vecrv += stats[stat.gauge.id]['vecrv']
+                veCRVTotal += stats[stat.gauge.id]['vecrv'] * stats[stat.gauge.id]['rewards']
+               }
+               weekData.vecrv = veCRVTotal/weekData.rewards
             }
             weekData.stats = stats
-
           setWeekData(weekData)
     }
    
