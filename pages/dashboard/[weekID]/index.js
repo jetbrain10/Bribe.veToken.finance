@@ -162,7 +162,7 @@ const query = gql`
                   }
                 }
 
-                stats[stat.gauge.id]['rewards'] += Number(rewardUSD.toFixed(2))
+                stats[stat.gauge.id]['rewards'] += Number(rewardUSD.toFixed(3))
                 stats[stat.gauge.id]['vecrv'] += balance == 0 || rewardUSD == 0 ?0 :(rewardUSD/(balance/(10 ** 18)))
                 stats[stat.gauge.id]['name'] = stat.gauge.name
                 stats[stat.gauge.id]['symbol'] = stat.gauge.symbol
@@ -199,7 +199,7 @@ const query = gql`
       return null
     }
     const chartData = Object.entries(weekData.stats).map(([k, v])=>{
-      return {symbol: v.symbol, total: Number(v.rewards.toFixed(2))}
+      return {symbol: v.symbol, total: Number(v.rewards.toFixed(3))}
     }).sort(function(a,b) {
       return b.total-a.total
   })
@@ -257,7 +257,7 @@ const query = gql`
                   Total
             </Grid>
             <Grid item xs='4' align="center">
-                  <Typography align="center" className={ classes.nameText }>${weekData.vecrv.toFixed(2)}</Typography>
+                  <Typography align="center" className={ classes.nameText }>${weekData.vecrv.toFixed(3)}</Typography>
                   $/veCRV
             </Grid>
           </Grid>
