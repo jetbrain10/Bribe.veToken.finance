@@ -265,11 +265,7 @@ function Voting({ changeTheme, theme }) {
        
         break;
     }
-    if(sort % 2 == 0){
-      setWeeklyData(weeklyData.sort(function(a,b) {
-        return b.rewards-a.rewards
-      }))
-    }
+   
     setSort(currentSort)
 
     return;
