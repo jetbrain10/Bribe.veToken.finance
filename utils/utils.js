@@ -87,6 +87,10 @@ export function convertToInternationalCurrencySystem (labelValue) {
   : Math.abs(Number(labelValue)).toFixed(2);
 
 }
+
+export function convertToCurrencyWithSign(labelValue){
+  return '$' + convertToInternationalCurrencySystem(labelValue)
+}
 export const tokenOracle= async (tokens)=>{
   let url = 'https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses='
   for(let i = 0;i < tokens.length;i++){
@@ -177,3 +181,6 @@ export const getGaugeSymbol= (gaugeAddress)=>{
   }
   return name
 }
+export const addDollarSign = (value) => {
+  return '$' + value;
+};

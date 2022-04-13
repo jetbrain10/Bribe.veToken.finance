@@ -14,10 +14,10 @@ import classes from './dashboard.module.css';
 import stores from '../../stores/index.js';
 import {  CONNECT_WALLET } from '../../stores/constants';
 import { gaugeGraphUrl } from '../../utils/constants.js';
-import { convertToInternationalCurrencySystem, tokenOracle } from '../../utils/utils.js';
+import { addDollarSign, convertToCurrencyWithSign, convertToInternationalCurrencySystem, tokenOracle } from '../../utils/utils.js';
 import { Area, Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const searchTheme = createTheme({
   palette: {
@@ -161,6 +161,7 @@ function Voting({ changeTheme, theme }) {
             }
             weekData.vecrv = veCRVTotal/weekData.rewards
             weekData.vecrv = weekData.vecrv.toFixed(3)
+            // weekData.rewards = weekData.rewards.toFixed(3)
             newWeeklyData.push(weekData)
         }
         setWeeklyData(newWeeklyData)
@@ -197,11 +198,11 @@ function Voting({ changeTheme, theme }) {
       className={ classes.chart }
     >
      <CartesianGrid strokeDasharray="6" vertical={false}/> <XAxis  interval={0}  dataKey="date" verticalAnchor= "start" fontSize={14} angle={-45} textAnchor='end' height={75}/>
-     <YAxis yAxisId={1}    domain={['auto', 'auto']}  orientation="right"/>
-      <YAxis yAxisId={2}  tickFormatter={convertToInternationalCurrencySystem}/>
+     <YAxis yAxisId={1} tickFormatter={addDollarSign}    domain={['auto', 'auto']}  orientation="right"/>
+      <YAxis yAxisId={2}  tickFormatter={convertToCurrencyWithSign}/>
       <Tooltip cursor={false}  />
-    <Bar yAxisId={2} maxBarSize={30}  dataKey="rewards" fill="#8884d8" /> 
-      <Line  yAxisId={1} type="monotone" dataKey="vecrv" stroke="#E3C565"  activeDot={{ r: 1 }} strokeWidth={2} strokeDasharray="2"  />
+    <Bar yAxisId={2} maxBarSize={30} dataKey="rewards" fill="#8884d8" /> 
+      <Line  yAxisId={1} type="monotone" dataKey="vecrv"  stroke="#E3C565"  activeDot={{ r: 1 }} strokeWidth={2} strokeDasharray="2"  />
     </ComposedChart>
     </ResponsiveContainer >
   </Box>
@@ -223,12 +224,12 @@ function Voting({ changeTheme, theme }) {
         if(currentSort == 1){
           currentSort = 0
           setWeeklyData(weeklyData.sort(function(a,b) {
-            return a.timestamp-b.timestamp
+            return b.timestamp-a.timestamp
           }))
         }else{
           currentSort= 1
           setWeeklyData(weeklyData.sort(function(a,b) {
-            return b.timestamp-a.timestamp
+            return a.timestamp-b.timestamp
           }))
         }
         break;
@@ -237,12 +238,12 @@ function Voting({ changeTheme, theme }) {
         if(currentSort == 2){
           currentSort = 3
           setWeeklyData(weeklyData.sort(function(a,b) {
-            return a.vecrv-b.vecrv
+            return b.vecrv-a.vecrv
           }))
         }else{
           currentSort= 2
           setWeeklyData(weeklyData.sort(function(a,b) {
-            return b.vecrv-a.vecrv
+            return a.vecrv-b.vecrv
           }))
         }
         break;
@@ -251,18 +252,21 @@ function Voting({ changeTheme, theme }) {
         if(currentSort == 4){
           currentSort = 5
           setWeeklyData(weeklyData.sort(function(a,b) {
-            return a.rewards-b.rewards
+            return b.rewards-a.rewards
           }))
           
         }else{
           currentSort= 4
-          setWeeklyData(weeklyData.sort(function(a,b) {
-            return b.rewards-a.rewards
-          }))
+          
         }
         
        
         break;
+    }
+    if(sort % 2 == 0){
+      setWeeklyData(weeklyData.sort(function(a,b) {
+        return b.rewards-a.rewards
+      }))
     }
     setSort(currentSort)
 
@@ -290,14 +294,28 @@ function Voting({ changeTheme, theme }) {
           <div className={ theme.palette.type === 'dark' ? classes.tableHeaderDark : classes.tableHeader }>
             <div className={ classes.tableHeaderRow }>
               <div className={ classes.poolRow }>
-                <Button onClick={()=>sortWeeklyData("start")}><Typography className={ `${classes.tableHeaderText} ${classes.poolHeaderText}` }>Start</Typography></Button>
+                <Button onClick={()=>sortWeeklyData("timestamp")}>
+                  <Typography className={ `${classes.tableHeaderText} ${classes.poolHeaderText}` }>
+                    Start
+                    </Typography>
+                    {sort == 1 ?<ArrowDropUpIcon/> : null}
+                    {sort == 0 ?<ArrowDropDownIcon/> : null}
+                    </Button>
               </div>
               <div className={ classes.typeRow }>
-              <Button onClick={()=>sortWeeklyData("vecrv")}><Typography className={ classes.tableHeaderText }>$/veCRV</Typography></Button>
+              <Button onClick={()=>sortWeeklyData("vecrv")}>
+                <Typography className={ classes.tableHeaderText }>$/veCRV</Typography>
+                {sort == 2 ?<ArrowDropUpIcon/> : null}
+                    {sort == 3 ?<ArrowDropDownIcon/> : null}
+                </Button>
                 
               </div>
               <div className={ classes.typeRow }>
-              <Button onClick={()=>sortWeeklyData("reward")}><Typography className={ classes.tableHeaderText }>Total</Typography></Button>
+              <Button onClick={()=>sortWeeklyData("rewards")}>
+                <Typography className={ classes.tableHeaderText }>Total</Typography>
+                {sort == 4 ?<ArrowDropUpIcon/> : null}
+                    {sort == 5 ?<ArrowDropDownIcon/> : null}
+                </Button>
               </div>
           
             </div>

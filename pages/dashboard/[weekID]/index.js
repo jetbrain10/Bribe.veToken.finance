@@ -18,7 +18,7 @@ import {  CONNECT_WALLET } from '../../../stores/constants';
 
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { gaugeGraphUrl } from '../../../utils/constants.js';
-import { convertToInternationalCurrencySystem, getGaugeSymbol, getManualGaugeName, tokenOracle } from '../../../utils/utils.js';
+import { convertToCurrencyWithSign, convertToInternationalCurrencySystem, getGaugeSymbol, getManualGaugeName, tokenOracle } from '../../../utils/utils.js';
 
 
 const searchTheme = createTheme({
@@ -217,7 +217,7 @@ const query = gql`
       className={ classes.chart }
     >
      <CartesianGrid strokeDasharray="6" vertical={false}/> <XAxis dataKey="symbol"  />
-      <YAxis tickFormatter={convertToInternationalCurrencySystem}/>
+      <YAxis tickFormatter={convertToCurrencyWithSign}/>
       <Tooltip cursor={false}  />
       <Bar maxBarSize={30}  dataKey="total" fill="#8884d8" > {
                         chartData.map((entry, index) => (
