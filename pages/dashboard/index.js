@@ -220,7 +220,7 @@ function Voting({ changeTheme, theme }) {
   const sortWeeklyData=(sortData)=>{
     let currentSort = sort
     switch(sortData){
-      case 'start':
+      case 'timestamp':
         if(currentSort == 1){
           currentSort = 0
           setWeeklyData(weeklyData.sort(function(a,b) {
@@ -247,7 +247,7 @@ function Voting({ changeTheme, theme }) {
           }))
         }
         break;
-      case 'reward':
+      case 'rewards':
         
         if(currentSort == 4){
           currentSort = 5
@@ -257,7 +257,9 @@ function Voting({ changeTheme, theme }) {
           
         }else{
           currentSort= 4
-          
+          setWeeklyData(weeklyData.sort(function(a,b) {
+            return a.rewards-b.rewards
+          }))
         }
         
        
