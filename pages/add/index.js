@@ -47,34 +47,7 @@ const searchTheme = createTheme({
       fontSize: '12px'
     }
   },
-  // overrides: {
-  //   MuiPaper: {
-  //     elevation1: {
-  //       "box-shadow": '0px 7px 7px #0000000A;',
-  //       "-webkit-box-shadow": '0px 7px 7px #0000000A;',
-  //       "-moz-box-shadow": '0px 7px 7px #0000000A;',
-  //     }
-  //   },
-  //   MuiInputBase: {
-  //     input: {
-  //       fontSize: '14px'
-  //     },
-  //   },
-  //   MuiOutlinedInput: {
-  //     input: {
-  //       padding: '34px 50px'
-  //     },
-  //     notchedOutline: {
-  //       borderColor: "transparent",
-  //     },
-  //     adornedEnd: {
-  //       paddingRight: '40px'
-  //     },
-  //     adornedStart: {
-  //       paddingLeft: '40px'
-  //     }
-  //   },
-  // },
+  
 });
 
 function Voting({ changeTheme, theme }) {
