@@ -7,7 +7,8 @@
     "build": "next build",
     "export": "next export",
     "build2": "next build && next export",
-    "start": "next start -p $PORT"
+    "start": "next start -p $PORT",
+    "test": "npx hardhat test"
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",
@@ -39,5 +40,14 @@
     "recharts": "^2.0.10",
     "web3": "^1.4.0",
     "web3-batch-call": "^1.0.12"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@openzeppelin/contracts": "^4.5.0",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.4",
+    "ethers": "^5.6.1",
+    "hardhat": "^2.9.2"
   }
 }

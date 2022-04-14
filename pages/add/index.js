@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import { Typography, Paper, Button, CircularProgress, TextField, InputAdornment } from '@material-ui/core';
+import { Typography, Paper, Button, CircularProgress, TextField, InputAdornment, IconButton, Tooltip } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { withTheme, createTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import Layout from '../../components/layout/layout.js';
 import Header from '../../components/header';
 import SearchIcon from '@material-ui/icons/Search';
+import CopyIcon from '@material-ui/icons/FileCopyOutlined';
 
 import classes from './add.module.css';
 
@@ -94,6 +95,12 @@ function Voting({ changeTheme, theme }) {
     router.push(`/`);
   }
 
+  const onTooltipClicked = (gaugeAddress) => {
+    navigator.clipboard.writeText(gaugeAddress).then(res=>{
+      console.log("Address copied to clipboard!");
+    })
+  }
+
   return (
     <Layout changeTheme={changeTheme}>
       <div className={ classes.container }>
@@ -123,7 +130,7 @@ function Voting({ changeTheme, theme }) {
                       </Typography>
                     </InputAdornment>
                   }}
-                /> 
+                />
               </Paper>
             {/* </ThemeProvider> */}
           </div>
@@ -153,13 +160,33 @@ function Voting({ changeTheme, theme }) {
 
                 return true
               }).map((gauge) => {
-                let chainClass = classes.typeText
-                if(gauge.gaugeTypeName === 'Fantom') {
-                  chainClass = classes.typeTextFantom
-                } else if(gauge.gaugeTypeName === 'Polygon') {
-                  chainClass = classes.typeTextPolygon
-                } else if(gauge.gaugeTypeName === 'xDAI') {
-                  chainClass = classes.typeTextXDAI
+                let chainClass;
+
+                switch(gauge.gaugeTypeName){
+                  case 'Fantom':
+                    chainClass = classes.typeTextFantom
+                    break;
+                  case 'Polygon':
+                    chainClass = classes.typeTextPolygon
+                    break;
+                  case 'xDAI':
+                    chainClass = classes.typeTextXDAI
+                    break;
+                  case 'Arbitrum':
+                    chainClass = classes.typeTextArbitrum
+                    break;
+                  case 'Avalanche':
+                    chainClass = classes.typeTextAvalanche
+                    break;
+                  case 'Harmony':
+                    chainClass = classes.typeTextHarmony
+                    break;
+                  case 'Fundraising':
+                    chainClass = classes.typeTextFundraising
+                    break;
+                  default:
+                    chainClass = classes.typeText
+                    break;
                 }
 
 
@@ -168,6 +195,11 @@ function Voting({ changeTheme, theme }) {
                     <div className={ classes.poolRow }>
                       <img src={ gauge.logo } alt='' width='40px' height='40px' className={ classes.assetIcon } />
                       <Typography className={ classes.nameText }>{gauge.name}</Typography>
+                      <Tooltip title="Copy address to clipboard">
+                        <IconButton style={{color: '#b1b6c1'}} onClick={ () => { onTooltipClicked(gauge.gaugeAddress) }}>
+                          <CopyIcon style={{fontSize: 18}} />
+                        </IconButton>
+                      </Tooltip>
                     </div>
                     <div className={ classes.typeRow }>
                       <Typography className={ chainClass }>{gauge.gaugeTypeName}</Typography>

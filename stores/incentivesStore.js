@@ -229,6 +229,64 @@ class Store {
           case '0xd8b712d29381748dB89c36BCa0138d7c75866ddF':
             name = 'Curve.fi Factory USD Metapool: Magic Internet Money 3Pool'
             break;
+          case '0xFf17560d746F85674FE7629cE986E949602EF948':
+            name = 'Arbitrum.curve.fi USDT/USDC (USDT+USDC)'
+            break;
+          case '0x9044E12fB1732f88ed0c93cfa5E9bB9bD2990cE5':
+            name = 'Arbitrum.curve.fi USDT/wBTC/ETH (USDT + wBTC + ETH)'
+            break;
+          case '0x9F86c5142369B1Ffd4223E5A2F2005FC66807894':
+            name = 'Arbitrum.curve.fi wBTC/renBTC (wBTC + renBTC)'
+            break;
+          case '0x260e4fBb13DD91e187AE992c3435D0cf97172316':
+            name = 'Ftm.curve.fi fUSDT/wBTC/wETH (fUSDT + wBTC + wETH)'
+            break;
+          case '0xB504b6EB06760019801a91B451d3f7BD9f027fC9':
+            name = 'Avax.curve.fi aDAI/aUSDC/aUSDT (aDAI + aUSDC + aUSDT)'
+            break;
+          case '0x75D05190f35567e79012c2F0a02330D3Ed8a1F74':
+            name = 'Avax.curve.fi wBTC.e/renBTC.e (wBTC.e + renBTC.e)'
+            break;
+          case '0xa05E565cA0a103FcD999c7A7b8de7Bd15D5f6505':
+            name = 'Avax.curve.fi DAI.e/USDC.e/USDT.e/wBTC.e/wETH (DAI.e + USDC.e + USDT.e + wBTC.e + wETH)'
+            break;
+          case '0xf2Cde8c47C20aCbffC598217Ad5FE6DB9E00b163':
+            name = 'Harmony.curve.fi DAI/USDC/USDT (DAI + USDC + USDT)'
+            break;
+          case '0x56eda719d82aE45cBB87B7030D3FB485685Bea45':
+            name = 'Arbitrum.curve.fi EURS/USDC/USDT (EURS + USDC + USDT)'
+            break;
+          case '0xAF78381216a8eCC7Ad5957f3cD12a431500E0B0D':
+            name = 'Polygon.curve.fi EURt/DAI/USDC/USDT (EURt + DAI + USDC + USDT)'
+            break;
+          case '0xc1c5B8aAfE653592627B54B9527C7E98326e83Ff':
+            name = 'Ftm.curve.fi FTM/FTML (FTM + fantom-l)'
+            break;
+          case '0x1c77fB5486545810679D53E325d5bCf6C6A45081':
+            name = 'Ftm.curve.fi MIM/FUSDT/USDC (MIM + FUSDT + USDC)'
+            break;
+          case '0x9562c4D2E06aAf85efC5367Fb4544ECeB788465E':
+            name = 'Curve.fi UST 3pool-f Gauge Deposit '
+            break;
+          case '0xbAF05d7aa4129CA14eC45cC9d4103a9aB9A9fF60':
+            // not found
+            name = 'Fundraising gauge'
+            break;
+          case '0xfbb5b8f2f9b7a4d21ff44dC724C1Fb7b531A6612':
+            name = 'Avax.curve.fi AVAX/AVAXL-f Gauge deposit'
+            break;
+          case '0xA6ff75281eACa4cD5fEEb333e8E15558208295e5':
+            name = 'Ftm.curve.fi USDL-3CRV-f Gauge Deposit'
+            break;
+          case '0x1AEAA1b998307217D62E9eeFb6407B10598eF3b8':
+            name = 'Avax.curve.fi UST/USDC/USDt (UST + USDC + USDt)'
+            break;
+          case '0x18006c6A7955Bf6Db72DE34089B975f733601660':
+            name = 'Curve EURS-3Crv (crvEURSUSD)'
+            break;
+          case '0xd0698b2E41C42bcE42B51f977F962Fd127cF82eA':
+            name = 'Curve.fi 4POOL-f Gauge Deposit'
+            break;
           default:
         }
       }
@@ -264,6 +322,14 @@ class Store {
         return 'Polygon'
       case '4':
         return 'xDAI'
+      case '7':
+        return 'Arbitrum'
+      case '8':
+        return 'Avalanche'
+      case '9':
+        return 'Harmony'
+      case '10':
+        return 'Fundraising'
       default:
         return 'Unknown'
     }
