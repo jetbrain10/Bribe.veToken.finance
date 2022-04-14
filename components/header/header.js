@@ -163,9 +163,9 @@ function Header(props) {
           onChange={handleToggleChange}
         />
       </div>
-      <Button disableElevation className={classes.platformButton} variant="contained" color="secondary" onClick={onPlatformClicked}>
+      {/* <Button disableElevation className={classes.platformButton} variant="contained" color="secondary" onClick={onPlatformClicked}>
         <img src={img} className={ classes.protocolLogo}/><Typography variant="h5">{platform}</Typography>
-      </Button>
+      </Button> */}
       {platFormPicker && <Platform platFormPicker={platFormPicker} setPlatFormPicker={onPlatformClicked} className={darkMode ? 'dark':'light'} />}
 
       <Button disableElevation className={classes.accountButton} variant="contained" color="secondary" onClick={onAddressClicked}>
