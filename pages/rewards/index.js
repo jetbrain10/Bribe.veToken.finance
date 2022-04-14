@@ -284,9 +284,9 @@ function Voting({ changeTheme, theme }) {
           <div className={classes.copyContainer}>
             <div className={classes.copyCentered}>
               <Typography variant='h1' className={classes.titleSpacing}><span className={classes.helpingUnderline}>
-                <button className={classes.platFormChangeButton} onClick={onPlatformClicked}>{platform}
-                </button>
-                &nbsp;Vote Incentives</span></Typography>
+                {/* <button className={classes.platFormChangeButton} onClick={onPlatformClicked}>{platform}
+                </button> 
+                &nbsp;*/}Vote Incentives</span></Typography>
               <Typography variant='h2' className={classes.helpingParagraph}>Get more for your votes! <ThumbUpIcon className={classes.thumbIcon} /></Typography>
               <div className={classes.divider}>
               </div>
