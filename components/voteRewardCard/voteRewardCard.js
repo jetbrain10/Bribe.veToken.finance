@@ -20,6 +20,7 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: [
+      'Poppins',
       'Inter',
       'Arial',
       '-apple-system',

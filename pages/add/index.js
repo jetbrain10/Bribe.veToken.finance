@@ -18,17 +18,18 @@ import { formatCurrency, formatAddress } from '../../utils';
 
 
 const searchTheme = createTheme({
-  palette: {
-    type: 'light',
-    primary: {
-      main: '#2F80ED',
-    },
-  },
-  shape: {
-    borderRadius: '16px'
-  },
+  // palette: {
+  //   type: 'light',
+  //   primary: {
+  //     main: '#2F80ED',
+  //   },
+  // },
+  // shape: {
+  //   borderRadius: '16px'
+  // },
   typography: {
     fontFamily: [
+      'Poppins',
       'Inter',
       'Arial',
       '-apple-system',
@@ -45,34 +46,34 @@ const searchTheme = createTheme({
       fontSize: '12px'
     }
   },
-  overrides: {
-    MuiPaper: {
-      elevation1: {
-        "box-shadow": '0px 7px 7px #0000000A;',
-        "-webkit-box-shadow": '0px 7px 7px #0000000A;',
-        "-moz-box-shadow": '0px 7px 7px #0000000A;',
-      }
-    },
-    MuiInputBase: {
-      input: {
-        fontSize: '14px'
-      },
-    },
-    MuiOutlinedInput: {
-      input: {
-        padding: '34px 50px'
-      },
-      notchedOutline: {
-        borderColor: "transparent",
-      },
-      adornedEnd: {
-        paddingRight: '40px'
-      },
-      adornedStart: {
-        paddingLeft: '40px'
-      }
-    },
-  },
+  // overrides: {
+  //   MuiPaper: {
+  //     elevation1: {
+  //       "box-shadow": '0px 7px 7px #0000000A;',
+  //       "-webkit-box-shadow": '0px 7px 7px #0000000A;',
+  //       "-moz-box-shadow": '0px 7px 7px #0000000A;',
+  //     }
+  //   },
+  //   MuiInputBase: {
+  //     input: {
+  //       fontSize: '14px'
+  //     },
+  //   },
+  //   MuiOutlinedInput: {
+  //     input: {
+  //       padding: '34px 50px'
+  //     },
+  //     notchedOutline: {
+  //       borderColor: "transparent",
+  //     },
+  //     adornedEnd: {
+  //       paddingRight: '40px'
+  //     },
+  //     adornedStart: {
+  //       paddingLeft: '40px'
+  //     }
+  //   },
+  // },
 });
 
 function Voting({ changeTheme, theme }) {
@@ -123,14 +124,14 @@ function Voting({ changeTheme, theme }) {
   return (
     <Layout changeTheme={changeTheme}>
       <div className={ classes.container }>
-        <div className={ classes.headContainer }>
+        <div className={ theme.palette.type === 'dark' ? classes.headContainerDark : classes.headContainer }>
           <div className={ classes.headContainerContent }>
             <Header changeTheme={ changeTheme } variant={2} backClicked={ onBackClicked }/>
             <Typography className={ classes.selectPool }>Select a Pool</Typography>
             <Typography className={ classes.choosePool }>Choose a pool that you would like to offer rewards for below...</Typography>
           </div>
           <div className={ classes.searchField }>
-            <ThemeProvider theme={searchTheme}>
+            {/* <ThemeProvider theme={searchTheme}> */}
               <Paper className={ classes.searchPaper }>
                 <TextField
                   fullWidth
@@ -149,9 +150,9 @@ function Voting({ changeTheme, theme }) {
                       </Typography>
                     </InputAdornment>
                   }}
-                />
+                /> 
               </Paper>
-            </ThemeProvider>
+            {/* </ThemeProvider> */}
           </div>
         </div>
         <div className={ classes.tableContainer }>

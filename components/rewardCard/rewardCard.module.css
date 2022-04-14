@@ -1,9 +1,14 @@
 .chainContainer {
   width: 100%;
-  border-radius: 30px !important;
+  border-radius: 15px !important;
   display: flex;
   flex-direction: column;
-  border-bottom: 3px solid #0048FF;
+  /* border-bottom: 3px solid #0048FF; */
+  max-width: 250px;
+}
+
+.chainContainer:hover{
+  box-shadow: 0 0 0 5px var(--outline-shadow), 0 10px 30px -10px #000;
 }
 
 .chainContainerPositive {
@@ -12,6 +17,10 @@
   display: flex;
   flex-direction: column;
   border-bottom: 3px solid #4aa166;
+}
+
+.cardsContainer{
+  box-shadow: inset 0 0 0 6px red;
 }
 
 .tryButton {
@@ -23,24 +32,24 @@
 
 .descriptionPreText {
   padding-top: 30px;
-  font: normal normal 300 13px/16px Inter !important;
+  font: normal normal 300 13px/16px Poppins !important;
   opacity: 0.54;
 }
 
 .descriptionText {
   padding-top: 12px;
-  font: normal normal bold 28px/34px Inter !important;
+  font: normal normal bold 28px/34px Poppins !important;
 }
 
 .descriptionSubText {
   padding-top: 12px;
-  font: normal normal 300 13px/16px Inter !important;
+  font: normal normal 300 13px/16px Poppins !important;
   opacity: 0.54;
 }
 
 .descriptionUnlock {
   padding-top: 12px;
-  font: normal normal 300 13px/16px Inter !important;
+  font: normal normal 300 13px/16px Poppins !important;
 }
 
 .topInfo {

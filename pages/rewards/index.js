@@ -40,6 +40,7 @@ const searchTheme = createTheme({
   },
   typography: {
     fontFamily: [
+      'Poppins',
       'Inter',
       'Arial',
       '-apple-system',
@@ -98,6 +99,7 @@ const searchThemeDark = createTheme({
   },
   typography: {
     fontFamily: [
+      'Poppins',
       'Inter',
       'Arial',
       '-apple-system',

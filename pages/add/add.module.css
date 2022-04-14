@@ -3,7 +3,17 @@
 }
 
 .headContainer {
-  background: transparent url('../../public/Group 4869.png') 0% 0% no-repeat padding-box;
+  background: radial-gradient(ellipse at top left, #bb80ff 20%, transparent),
+    radial-gradient(ellipse at right, #008cff, transparent),
+    radial-gradient(ellipse at bottom, #00a782, transparent),
+    linear-gradient(rgb(205, 217, 255), rgb(83, 152, 255));}
+    .headContainerDark{
+      background: radial-gradient(ellipse at top left, #530196 20%, transparent),
+      radial-gradient(ellipse at right, #0c8e9f, transparent),
+      radial-gradient(ellipse at bottom, #00051f, transparent),
+      linear-gradient(rgb(0, 15, 65), rgb(0, 102, 255));
+    }
+    .headContainer, .headContainerDark{
   position: relative;
   z-index: 9;
   position: sticky;
@@ -22,8 +32,10 @@
 }
 
 .selectPool {
-  font: normal normal bold 32px/38px Grtsk Giga !important;
-  letter-spacing: 2.88px !important;
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem !important;
+  font-weight: 800;
+  /* letter-spacing: 2.88px !important; */
   color: #FFFFFF !important;
   padding-bottom: 12px;
   padding-top: 12px;
@@ -31,7 +43,7 @@
 
 .choosePool {
   text-align: center !important;
-  font: normal normal 300 17px/20px Inter !important;
+  font: normal normal 300 17px/20px Poppins !important;
   letter-spacing: -0.34px !important;
   color: #FFFFFF !important;
   padding-bottom: 100px;
@@ -45,9 +57,12 @@
   margin: auto;
   max-width: 1200px;
 }
+.searchField > div > div > div{
+  padding: .6rem 2rem;
+}
 
 .searchInputAdnornment {
-  font: normal normal bold 16px/35px Inter !important;
+  font: normal normal bold 16px/35px Poppins !important;
   letter-spacing: 0px;
 }
 
@@ -75,7 +90,7 @@
 }
 
 .tableHeaderText {
-  font: normal normal bold 14px/35px Inter !important;
+  font: normal normal bold 14px/35px Poppins !important;
   letter-spacing: 0px !important;
   color: #707786 !important;
   opacity: 0.6;
@@ -116,17 +131,17 @@
 
 .nameText {
   text-align: left;
-  font: normal normal bold 20px/35px Inter !important;
+  font: normal normal bold 20px/35px Poppins !important;
   letter-spacing: 0px;
 }
 
 .rowText {
-  font: normal normal bold 16px/35px Inter !important;
+  font: normal normal bold 16px/35px Poppins !important;
   letter-spacing: 0px;
 }
 
 .typeText {
-  font: normal normal bold 12px/23px Inter !important;
+  font: normal normal bold 12px/23px Poppins !important;
   background: #b1b6c1;
   border-radius: 20px;
   width: fit-content;
@@ -135,7 +150,7 @@
 }
 
 .typeTextFantom {
-  font: normal normal bold 12px/23px Inter !important;
+  font: normal normal bold 12px/23px Poppins !important;
   background: #1969ff;
   border-radius: 20px;
   width: fit-content;
@@ -144,7 +159,7 @@
 }
 
 .typeTextPolygon {
-  font: normal normal bold 12px/23px Inter !important;
+  font: normal normal bold 12px/23px Poppins !important;
   background: #8247e5;
   border-radius: 20px;
   width: fit-content;
@@ -153,7 +168,7 @@
 }
 
 .typeTextXDAI {
-  font: normal normal bold 12px/23px Inter !important;
+  font: normal normal bold 12px/23px Poppins !important;
   background: #62a7a5;
   border-radius: 20px;
   width: fit-content;
