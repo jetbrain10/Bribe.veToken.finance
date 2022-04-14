@@ -36,6 +36,14 @@ class Store {
     this.emitter = emitter;
 
     this.store = {
+      platform: "CRV",
+      platformsAvailable: {
+        CRV: { display: 'Curve CRV', description: 'Curve Finance DAO Token', img: '/daoTokens/crv.webp' },
+        '1inch': { display: '1inch', description: '1inch Network', img: '/daoTokens/1inch.png' },
+        COMP: { display: 'Compound Finance', description: 'Compound Finance', img: '/daoTokens/compound.png' },
+        UNI: { display: 'UniSwap', description: 'UniSwap Protocol', img: '/daoTokens/uni.png' },
+        // EX2: { display: 'EX2', description: '', img: '' }
+      },
       account: null,
       web3context: null,
       connectorsByName: {
@@ -56,7 +64,7 @@ class Store {
     };
 
     dispatcher.register(
-      function(payload) {
+      function (payload) {
         switch (payload.type) {
           case CONFIGURE:
             this.configure(payload);
@@ -122,7 +130,7 @@ class Store {
 
   updateAccount = () => {
     const that = this;
-    const res = window.ethereum.on("accountsChanged", function(accounts) {
+    const res = window.ethereum.on("accountsChanged", function (accounts) {
       that.setStore({
         account: { address: accounts[0] },
         web3context: { library: { provider: window.ethereum } }
@@ -203,7 +211,7 @@ class Store {
       //   provider = web3context.library.provider;
       // }
 
-      if(web3context && web3context.library) {
+      if (web3context && web3context.library) {
         provider = web3context.library.provider;
       } else {
         provider = network.providers['1'];
@@ -213,7 +221,7 @@ class Store {
         return null;
       }
       return new Web3(provider);
-    } catch(ex) {
+    } catch (ex) {
       console.log(ex)
       return null
     }

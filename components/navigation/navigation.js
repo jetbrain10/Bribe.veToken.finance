@@ -151,6 +151,7 @@ function Navigation(props) {
   const router = useRouter();
 
   const account = stores.accountStore.getStore('account');
+  const platform = stores.accountStore.getStore('platform');
 
   const [darkMode, setDarkMode] = useState(false);
   const [unlockOpen, setUnlockOpen] = useState(false);
@@ -175,6 +176,14 @@ function Navigation(props) {
 
   const closoeUnlock = () => {
     setUnlockOpen(false);
+  };
+
+  const onPlatformPickerClicked = () => {
+    setPlatFormPicker(true);
+  };
+
+  const closePlatformPicker = () => {
+    setPlatFormPicker(false);
   };
 
   useEffect(function () {
@@ -274,9 +283,14 @@ function Navigation(props) {
                 onChange={handleToggleChange}
               />
             </div>
+            <Button disableElevation className={classes.platformChangeButton} variant="contained" color="secondary" onClick={onPlatformPickerClicked}>
+              {/* <div></div> */}
+              <Typography variant="h5">{platform}</Typography>
+            </Button>
+
             <Button disableElevation className={classes.accountButton} variant="contained" color="secondary" onClick={onAddressClicked}>
               <div className={`${classes.accountIcon} ${classes.metamask}`}></div>
-              <Typography variant="h5">{account ? formatAddress(account.address) : 'Connect Wallet'}</Typography>
+              <Typography variant="h5">***{account ? formatAddress(account.address) : 'Connect Wallet'}</Typography>
             </Button>
 
             {unlockOpen && <Unlock modalOpen={unlockOpen} closeModal={closoeUnlock} />}
