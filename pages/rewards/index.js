@@ -227,6 +227,11 @@ function Voting({ changeTheme, theme }) {
     router.push('/addVote')
   }
 
+  const onDashboard = () => {
+    router.push('/dashboard')
+  }
+
+
   const claimableRewards = rewards.filter((reward) => {
     return BigNumber(reward.claimable).gt(0)
   })
@@ -304,6 +309,14 @@ function Voting({ changeTheme, theme }) {
                     onClick={onAddVoteReward}
                   >
                     <Typography className={classes.buttonLabel}>Add Vote Bribe</Typography>
+                  </Button>
+                  <Button
+                    size='large'
+                    variant='contained'
+                    className={classes.addNetworkButton}
+                    onClick={onDashboard}
+                  >
+                    <Typography className={classes.buttonLabel}>Dashboard</Typography>
                   </Button>
                 </div>
               }
