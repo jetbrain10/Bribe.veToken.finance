@@ -177,11 +177,15 @@
 }
 
 .socials {
+  display: flex;
   position: fixed;
   bottom: 40px;
   width: calc(100% - 60px);
   max-width: 525px;
   left: 40px;
+}
+.socials span:nth-child(2){
+  margin-left: 16px;
 }
 
 .socialButton {
