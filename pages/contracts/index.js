@@ -176,7 +176,9 @@ function Voting({ changeTheme, theme }) {
                     <Typography>{e.contract}</Typography>
                   </div>
                   <div className={classes.poolRow}>
-                    <Typography>{e.address}</Typography>
+                    <a href={`https://etherscan.io/address/${e.address}`} target='_blank' rel='noopener noreferrer'>
+                      <Typography>{e.address}</Typography>
+                    </a>
                   </div>
 
                 </div>
