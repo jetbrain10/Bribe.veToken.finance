@@ -422,7 +422,16 @@ class Store {
         symbol: 'CVX',
         decimals: 18,
       },
-
+      {
+        address: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
+        symbol: 'SNX',
+        decimals: 18,
+      },
+      {
+        address: '0x01ba67aac7f75f647d94220cc98fb30fcc5105bf',
+        symbol: 'LYRA',
+        decimals: 18
+      }
     ]
   }
 
