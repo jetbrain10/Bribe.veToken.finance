@@ -1,1 +1,0 @@
-export const gaugeGraphUrl = 'https://api.studio.thegraph.com/query/24203/bribe-crv/0.0.2'

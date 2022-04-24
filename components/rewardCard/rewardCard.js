@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Paper, Grid, Button, FormControlLabel, Checkbox, Tooltip } from '@material-ui/core'
+import { Typography, Paper, Grid, Button, FormControlLabel, Checkbox, Tooltip, Divider, ClickAwayListener } from '@material-ui/core'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import PieChartIcon from '@material-ui/icons/PieChart';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import BigNumber from 'bignumber.js';
 import classes from './rewardCard.module.css'
 
 import * as moment from 'moment';
 import stores from '../../stores/index.js'
 import { getProvider, formatCurrency } from '../../utils'
-
 import { CLAIM_REWARD, ERROR, REWARD_CLAIMED } from '../../stores/constants';
 
 const theme = createTheme({
@@ -74,7 +74,15 @@ export default function RewardCard({ reward }) {
       setClaiming(true)
     }
   }
+  const [toolTipOpen, setTollTipOpen] = React.useState(false);
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(reward?.gauge?.gaugeAddress ?? '')
+    setTollTipOpen(true);
+  };
+  const handleTooltipClose = () => {
+    setTollTipOpen(false);
+  };
   const onVote = () => {
     window.open('https://dao.curve.fi/gaugeweight')
   }
@@ -131,12 +139,54 @@ export default function RewardCard({ reward }) {
   }
 
   const renderAvailable = () => {
+    if(!reward.gauge){
+      return null
+    }
     return (
       <>
         <Typography className={ classes.descriptionPreText } align='center'>Current receive amount:</Typography>
-        <Typography className={ classes.descriptionText} align='center' >{ formatCurrency(BigNumber(reward.tokensForBribe).times(reward.gauge.votes.userVoteSlopePercent).div(100)) } { reward.rewardToken.symbol }</Typography>
-        <Typography className={ classes.descriptionSubText } align='center'>100% vote for {reward.gauge.name} gives you {formatCurrency(reward.tokensForBribe)} { reward.rewardToken.symbol }</Typography>
+        <Typography className={ classes.descriptionText} align='center' >{ formatCurrency(BigNumber(reward.tokensForBribe).times(reward?.gauge?.votes?.userVoteSlopePercent ?? 0).div(100)) } { reward.rewardToken.symbol }</Typography>
+        <Grid container alignContent='space-between' spacing={2}>
+          <Grid item xs={6}>
+             Total Reward
+          </Grid>
+          <Grid item xs={6} align='right'>
+             Total Reward {reward.rewardToken.symbol}
+          </Grid>
+          <Grid item xs={6}>
+             Gauge Address
+          </Grid>
+          <Grid item xs={6} align='right'>
+          <ClickAwayListener onClickAway={handleTooltipClose}>
+            <div>
+              <Tooltip
+                PopperProps={{
+                  disablePortal: true,
+                }}
+                onClose={handleTooltipClose}
+                open={toolTipOpen}
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                title="Copied"
+              >
+                <Button onClick={handleCopy}>
+                <FileCopyIcon fontSize='small'/>
+             {reward.gauge.gaugeAddress.substring(0,5)+'...'}
+                </Button>
+              </Tooltip>
+            </div>
+          </ClickAwayListener>
+            
+          </Grid>
+        </Grid>
+       
+        <Divider/>
+        
+        <Typography className={ classes.descriptionSubText } align='center'>100% vote for {reward?.gauge.name} gives you {formatCurrency(reward.tokensForBribe)} { reward.rewardToken.symbol }</Typography>
+        <Typography className={ classes.descriptionSubText } align='center'>100% vote for {reward?.gauge.name} gives you {formatCurrency(reward.tokensForBribe)} { reward.rewardToken.symbol }</Typography>
         <Typography className={ classes.descriptionUnlock } align='center'>Unlocks {moment.unix(reward.rewardsUnlock).fromNow()}</Typography>
+      
         <Button
           className={ classes.tryButton }
           variant='outlined'
@@ -154,16 +204,16 @@ export default function RewardCard({ reward }) {
   const getContainerClass = () => {
     if(BigNumber(reward.claimable).gt(0)) {
       return classes.chainContainerPositive
-    } else if (BigNumber(reward.gauge.votes.userVoteSlopePercent).gt(0)) {
+    } else if (BigNumber(reward?.gauge?.votes?.userVoteSlopePercent ?? 0).gt(0)) {
       return classes.chainContainerPositive
-    } else if (BigNumber(reward.gauge.votes.userVoteSlopePercent).eq(0)) {
+    } else if (BigNumber(reward?.gauge?.votes?.userVoteSlopePercent ?? 0).eq(0)) {
       return classes.chainContainer
     }
 
-
-
   }
-
+  if(!reward.gauge){
+    return null
+  }
   return (
     <Paper elevation={ 1 } className={ getContainerClass() } key={ reward.id } >
       <ThemeProvider theme={theme}>
