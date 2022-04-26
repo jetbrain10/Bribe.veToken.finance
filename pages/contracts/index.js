@@ -11,8 +11,8 @@ import { ApolloClient, gql, InMemoryCache, useQuery } from '@apollo/client';
 import classes from './contracts.module.css';
 
 import stores from '../../stores/index.js';
-import { CONNECT_WALLET } from '../../stores/constants';
-import { gaugeGraphUrl } from '../../utils/constants.js';
+import { CONNECT_WALLET, gaugeGraphUrl } from '../../../stores/constants';
+
 
 const searchTheme = createTheme({
   palette: {

@@ -91,23 +91,6 @@ export function convertToInternationalCurrencySystem (labelValue) {
 export function convertToCurrencyWithSign(labelValue){
   return '$' + convertToInternationalCurrencySystem(labelValue)
 }
-export const tokenOracle= async (tokens)=>{
-  const uniqueTokens = tokens.filter((v, index) => {
-    return tokens.indexOf(v) === index;
-})
-  let url = 'https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses='
-  for(let i = 0;i < uniqueTokens.length;i++){
-      url += uniqueTokens[i]
-      if(i + 1 < uniqueTokens.length){
-          url += ','
-      }
-  }
-  url += '&vs_currencies=usd'
-  const response = await fetch(url);
-  const body = await response.json();
-
-  return body;
-}
 export const getManualGaugeName = (gaugeAddress)=>{
   let name = ''
   switch (gaugeAddress) {
