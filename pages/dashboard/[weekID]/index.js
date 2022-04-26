@@ -18,7 +18,7 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { convertToCurrencyWithSign, convertToInternationalCurrencySystem, getGaugeSymbol, getManualGaugeName, tokenOracle } from '../../../utils/utils.js';
+import { convertToCurrencyWithSign, convertToInternationalCurrencySystem, getGaugeSymbol, getManualGaugeName } from '../../../utils/utils.js';
 
 
 const searchTheme = createTheme({
@@ -85,7 +85,7 @@ function Voting({ changeTheme, theme }) {
   const router = useRouter();
   const weekID = router.query.weekID;
 
-  const barColors = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+  const barColors = ["#1f77b4", "#ff7f0e", "#2ca02c","#0353A4", "#006DAA", "#006DAA"]
 
   const onConnectWallet = () => {
     stores.emitter.emit(CONNECT_WALLET);
@@ -126,19 +126,11 @@ function Voting({ changeTheme, theme }) {
     `;
   const { data, loading, error, refetch } = useQuery(query, { variables: { weekID }, client });
   const [weekData, setWeekData] = useState()
-  const getTokenPrices = async () => {
-    let tokens = []
-    for (let stat of data.week.stats) {
-      tokens.push(stat.token.id)
-    }
-    const prices = await tokenOracle(tokens)
-    return prices;
-  }
+  
 
 
   useEffect(async () => {
     if (data) {
-      const prices = await getTokenPrices();
       let weekData = {
         id: data.week.id,
         timestamp: Number(data.week.timestamp),
@@ -242,7 +234,7 @@ function Voting({ changeTheme, theme }) {
     })
     return (
       <Box justifyContent='center' display='flex' bgcolor={theme.palette.type === 'dark' ? "#141C2F" : "#fff"} padding={4} fullWidth borderRadius={10}>
-        <ResponsiveContainer width="90%" height={250}>
+        <ResponsiveContainer width="90%" height={300}>
           <BarChart
             data={chartData}
             margin={{
@@ -253,12 +245,12 @@ function Voting({ changeTheme, theme }) {
             }}
             className={classes.chart}
           >
-            <CartesianGrid strokeDasharray="6" vertical={false} /> <XAxis dataKey="symbol" />
+            <CartesianGrid strokeDasharray="6" vertical={false} /> <XAxis dataKey="symbol"  verticalAnchor="start" fontSize={14} angle={-25} textAnchor='end' height={70}/>
             <YAxis tickFormatter={convertToCurrencyWithSign} />
             <Tooltip cursor={false} />
             <Bar maxBarSize={30} dataKey="total" fill="#8884d8" > {
               chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={barColors[index % 20]} />
+                <Cell key={`cell-${index}`} fill={barColors[index % barColors.length]} />
               ))
             }</Bar>
           </BarChart>

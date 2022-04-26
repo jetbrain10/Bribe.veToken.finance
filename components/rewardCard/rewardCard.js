@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Paper, Grid, Button, FormControlLabel, Checkbox, Tooltip, Divider, ClickAwayListener } from '@material-ui/core'
+import { Typography, Paper, Grid, Button, FormControlLabel, Checkbox, Tooltip, Divider, ClickAwayListener, Box } from '@material-ui/core'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import PieChartIcon from '@material-ui/icons/PieChart';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -8,7 +8,7 @@ import classes from './rewardCard.module.css'
 
 import * as moment from 'moment';
 import stores from '../../stores/index.js'
-import { getProvider, formatCurrency } from '../../utils'
+import { getProvider, formatCurrency, convertToInternationalCurrencySystem } from '../../utils'
 import { CLAIM_REWARD, ERROR, REWARD_CLAIMED } from '../../stores/constants';
 
 const theme = createTheme({
@@ -104,10 +104,57 @@ export default function RewardCard({ reward }) {
       stores.emitter.removeListener(REWARD_CLAIMED, claimReturned)
     };
   }, []);
+  const detailsView = (reward) =>{
+      return (
+        <Grid  container alignContent='space-between' spacing={2}>
+          <Grid item xs={6}>
+             Total Reward
+          </Grid>
+          <Grid item xs={6} align='right'>
+            {convertToInternationalCurrencySystem((Number(reward.rewardPerToken)/(10 ** reward.rewardToken.decimals )).toFixed(0))} ${reward.rewardToken.symbol}
+          </Grid>
 
+          <Grid item xs={6}>
+             Total Reward(USD)
+          </Grid>
+          <Grid item xs={6} align='right'>
+            ${convertToInternationalCurrencySystem((Number(reward.rewardPerToken)/(10 ** reward.rewardToken.decimals )).toFixed(0) * reward.rewardTokenPrice)}
+          </Grid>
+          <Grid item xs={6}>
+             Gauge Address
+          </Grid>
+          <Grid item xs={6} align='right'>
+          <ClickAwayListener onClickAway={handleTooltipClose}>
+            <div>
+              <Tooltip
+                PopperProps={{
+                  disablePortal: true,
+                }}
+                onClose={handleTooltipClose}
+                open={toolTipOpen}
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                title="Copied"
+              >
+                <Button onClick={handleCopy}>
+                <FileCopyIcon fontSize='small'/>
+             {reward.gauge.gaugeAddress.substring(0,5)+'...'}
+                </Button>
+              </Tooltip>
+            </div>
+          </ClickAwayListener>
+            
+         
+          
+          </Grid>
+        </Grid>
+      )
+  }
   const renderClaimable = () => {
     return (
       <>
+        {detailsView(reward)}
         <Typography className={ classes.descriptionText} align='center' >{ formatCurrency(reward.claimable) } { reward.rewardToken.symbol }</Typography>
         <Typography className={ classes.descriptionSubText } align='center'>Your reward for voting for {reward.gauge.name}</Typography>
         {
@@ -139,51 +186,18 @@ export default function RewardCard({ reward }) {
   }
 
   const renderAvailable = () => {
-    if(!reward.gauge){
-      return null
-    }
+
     return (
       <>
+              {detailsView(reward)}
+
         <Typography className={ classes.descriptionPreText } align='center'>Current receive amount:</Typography>
         <Typography className={ classes.descriptionText} align='center' >{ formatCurrency(BigNumber(reward.tokensForBribe).times(reward?.gauge?.votes?.userVoteSlopePercent ?? 0).div(100)) } { reward.rewardToken.symbol }</Typography>
-        <Grid container alignContent='space-between' spacing={2}>
-          <Grid item xs={6}>
-             Total Reward
-          </Grid>
-          <Grid item xs={6} align='right'>
-             Total Reward {reward.rewardToken.symbol}
-          </Grid>
-          <Grid item xs={6}>
-             Gauge Address
-          </Grid>
-          <Grid item xs={6} align='right'>
-          <ClickAwayListener onClickAway={handleTooltipClose}>
-            <div>
-              <Tooltip
-                PopperProps={{
-                  disablePortal: true,
-                }}
-                onClose={handleTooltipClose}
-                open={toolTipOpen}
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
-                title="Copied"
-              >
-                <Button onClick={handleCopy}>
-                <FileCopyIcon fontSize='small'/>
-             {reward.gauge.gaugeAddress.substring(0,5)+'...'}
-                </Button>
-              </Tooltip>
-            </div>
-          </ClickAwayListener>
-            
-          </Grid>
-        </Grid>
-       
-        <Divider/>
+        <Box m={2}>
         
-        <Typography className={ classes.descriptionSubText } align='center'>100% vote for {reward?.gauge.name} gives you {formatCurrency(reward.tokensForBribe)} { reward.rewardToken.symbol }</Typography>
+        </Box>
+       
+        
         <Typography className={ classes.descriptionSubText } align='center'>100% vote for {reward?.gauge.name} gives you {formatCurrency(reward.tokensForBribe)} { reward.rewardToken.symbol }</Typography>
         <Typography className={ classes.descriptionUnlock } align='center'>Unlocks {moment.unix(reward.rewardsUnlock).fromNow()}</Typography>
       
@@ -218,7 +232,10 @@ export default function RewardCard({ reward }) {
     <Paper elevation={ 1 } className={ getContainerClass() } key={ reward.id } >
       <ThemeProvider theme={theme}>
         <div className={ classes.topInfo }>
-          <PieChartIcon className={ classes.avatar } />
+          <img 
+      src={reward.rewardTokenLogo}
+      height={80}
+      className={ classes.avatar } />
           {
             BigNumber(reward.claimable).gt(0) && renderClaimable()
           }

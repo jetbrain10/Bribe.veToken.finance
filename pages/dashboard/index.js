@@ -12,9 +12,9 @@ import { ApolloClient, gql, InMemoryCache, useQuery } from "@apollo/client";
 import classes from './dashboard.module.css';
 
 import stores from '../../stores/index.js';
-import { CONNECT_WALLET, gaugeGraphUrl } from '../../../stores/constants';
+import { CONNECT_WALLET, gaugeGraphUrl } from '../../stores/constants';
 
-import { addDollarSign, convertToCurrencyWithSign, convertToInternationalCurrencySystem, tokenOracle } from '../../utils/utils.js';
+import { addDollarSign, convertToCurrencyWithSign, convertToInternationalCurrencySystem } from '../../utils/utils.js';
 import { Area, Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -122,19 +122,9 @@ function Voting({ changeTheme, theme }) {
   const [weeklyData, setWeeklyData] = useState()
 
   const [sort, setSort] = useState(0)
-  const getTokenPrices = async () => {
-    let tokens = []
-    for (let week of data.weeks) {
-      for (let stat of week.stats) {
-        tokens.push(stat.token.id)
-      }
-    }
-    const prices = await tokenOracle(tokens)
-    return prices;
-  }
+
   useEffect(async () => {
     if (data) {
-      const prices = await getTokenPrices();
       let newWeeklyData = []
       for (let week of data.weeks) {
         const weekData = {

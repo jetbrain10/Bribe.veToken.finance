@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import * as moment from 'moment';
 
-import { Typography, Paper, Button, CircularProgress, TextField, InputAdornment } from '@material-ui/core';
+import { Typography, Paper, Button, CircularProgress, TextField, InputAdornment, Grid } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { withTheme, createTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -235,6 +235,11 @@ function Voting({ changeTheme, theme }) {
     router.push('/dashboard')
   }
 
+  const onRewardHistory = () => {
+    router.push('/rewardHistory')
+  }
+
+
 
   const claimableRewards = rewards.filter((reward) => {
     return BigNumber(reward.claimable).gt(0)
@@ -299,7 +304,9 @@ function Voting({ changeTheme, theme }) {
               {
                 account &&
                 <div className={classes.addButtons}>
-                  <Button
+                  <Grid container spacing={2} >
+                    <Grid item xs={6}>
+                    <Button
                     size='large'
                     variant='contained'
                     className={classes.addNetworkButton}
@@ -307,7 +314,9 @@ function Voting({ changeTheme, theme }) {
                   >
                     <Typography className={classes.buttonLabel}>Add Gauge Bribe</Typography>
                   </Button>
-                  <Button
+                    </Grid>
+                    <Grid item xs={6}>
+                    <Button
                     size='large'
                     variant='contained'
                     className={classes.addNetworkButton}
@@ -315,7 +324,9 @@ function Voting({ changeTheme, theme }) {
                   >
                     <Typography className={classes.buttonLabel}>Add Vote Bribe</Typography>
                   </Button>
-                  <Button
+                    </Grid>
+                    <Grid item xs={6}>
+                    <Button
                     size='large'
                     variant='contained'
                     className={classes.addNetworkButton}
@@ -323,6 +334,22 @@ function Voting({ changeTheme, theme }) {
                   >
                     <Typography className={classes.buttonLabel}>Dashboard</Typography>
                   </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+
+                    <Button
+                    size='large'
+                    variant='contained'
+                    className={classes.addNetworkButton}
+                    onClick={onRewardHistory}
+                  >
+                    <Typography className={classes.buttonLabel}>Reward History</Typography>
+                  </Button>
+                    </Grid>
+                  </Grid>
+                  
+                
+               
                 </div>
               }
             </div>

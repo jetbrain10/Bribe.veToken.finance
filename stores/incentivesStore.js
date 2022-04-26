@@ -432,7 +432,8 @@ class Store {
       uri: gaugeGraphUrl,
       cache: new InMemoryCache(),
     })
-    const weekId = Math.trunc(Date.now()/604800000).toString()
+    console.log("fetching")
+    const weekId = Math.trunc(Date.now()/(WEEK * 1000)).toString()
     const query = gql`
     query Weeks($weekID: String){
       week(id: $weekID) {
@@ -440,22 +441,31 @@ class Store {
         stats {
           token {
             address: id
-            symbol: name
+            symbol
             decimals
           }
         }
       }
     }
    `;
-  console.log(weekId)
   const {data} = await client.query({query: query,variables:{weekID: weekId}});
-  console.log(data.week.stats)
   const tokens = data.week.stats.map(stat =>stat.token).filter((value, index, self) =>
         index === self.findIndex((t) => (
           t.address === value.address
         ))
       )
     return tokens
+  }
+  _tokenPriceLogo= async (token)=>{
+    let url = 'https://api.coingecko.com/api/v3/coins/ethereum/contract/' + token
+    
+    const response = await fetch(url);
+    const body = await response.json();
+    const data = {
+      price: body.market_data.current_price.usd,
+      logo: body.image.large
+    }
+    return data;
   }
   getBalances = async (payload) => {
     const web3 = await stores.accountStore.getWeb3Provider();
@@ -511,7 +521,7 @@ class Store {
       } else {
         return bribery
       }
-    }, (err, briberies) => {
+    }, async (err, briberies) => {
       if(err) {
         this.emitter.emit(ERROR, err)
       }
@@ -522,6 +532,7 @@ class Store {
         let bribery = flatBriberies[j]
         for(let i = 0; i < bribery.length; i++) {
           let bribe = bribery[i]
+          const tokenData = await this._tokenPriceLogo(bribe.rewardToken.address)
           rewards.push({
             activePeriod: bribe.activePeriod,
             rewardsUnlock: BigNumber(bribe.activePeriod).plus(WEEK).toFixed(0),
@@ -531,11 +542,13 @@ class Store {
             gauge: bribe.gauge,
             tokensForBribe: BigNumber(bribe.tokensForBribe).div(10**bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
             rewardPerToken: bribe.rewardPerToken,
-            rewardToken: bribe.rewardToken
+            rewardToken: bribe.rewardToken,
+            rewardTokenPrice: tokenData.price,
+            rewardTokenLogo: tokenData.logo
           })
         }
       }
-      console.log(rewards)
+      // console.log(rewards)
       this.setStore({ rewards: rewards })
       this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
     })
