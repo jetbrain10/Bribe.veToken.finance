@@ -432,7 +432,6 @@ class Store {
       uri: gaugeGraphUrl,
       cache: new InMemoryCache(),
     })
-    console.log("fetching")
     const weekId = Math.trunc(Date.now()/(WEEK * 1000)).toString()
     const query = gql`
     query Weeks($weekID: String){
@@ -498,7 +497,6 @@ class Store {
 
     // FTM, CREAM, MIM, DAI, USDC,
     const defaultTokens =await this._getRewardToken()
-    console.log(defaultTokens)
     //If it is a valid token, we add it to the search list
     if(rewardTokenAddress && web3.utils.isAddress(rewardTokenAddress)) {
       let includesToken = false
@@ -548,7 +546,6 @@ class Store {
           })
         }
       }
-      // console.log(rewards)
       this.setStore({ rewards: rewards })
       this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
     })
@@ -558,7 +555,6 @@ class Store {
       return null
     }
     const voteRewards = await this._getVoteBribery(web3, account, votes)
-    console.log(voteRewards)
     this.setStore({ voteRewards: voteRewards })
     this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
   };
