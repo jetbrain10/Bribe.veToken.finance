@@ -18,7 +18,7 @@ import { addDollarSign, convertToCurrencyWithSign, convertToInternationalCurrenc
 import { Area, Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import HelpIcon from '@material-ui/icons/help';
+import HelpIcon from '@material-ui/icons/Help';
 const searchTheme = createTheme({
   palette: {
     type: 'light',
