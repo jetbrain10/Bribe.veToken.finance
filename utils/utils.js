@@ -75,7 +75,7 @@ export function convertToInternationalCurrencySystem (labelValue) {
   return Math.abs(Number(labelValue)) >= 1.0e+9
 
   ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2) + "B"
-  // Six Zeroes for Millions 
+  // Six Zeroes for Millions
   : Math.abs(Number(labelValue)) >= 1.0e+6
 
   ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2) + "M"
@@ -124,6 +124,9 @@ export const getManualGaugeName = (gaugeAddress)=>{
     case '0xd8b712d29381748db89c36bca0138d7c75866ddf':
       name = 'Curve.fi Factory USD Metapool: Magic Internet Money 3Pool'
       break;
+    case '0xc5ae4b5f86332e70f3205a8151ee9ed9f71e0797':
+      name = 'Curve.fi sUSD3CRV-f Gauge Deposit'
+      break;
     default:
   }
   return name
@@ -161,6 +164,9 @@ export const getGaugeSymbol= (gaugeAddress)=>{
       break;
     case '0xd8b712d29381748db89c36bca0138d7c75866ddf':
       name = 'MIM-3LP3CRV'
+      break;
+    case '0xc5ae4b5f86332e70f3205a8151ee9ed9f71e0797':
+      name = 'sUSD3CRV-f-gauge'
       break;
     default:
   }
