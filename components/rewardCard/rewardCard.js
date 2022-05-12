@@ -106,7 +106,7 @@ export default function RewardCard({ reward }) {
   }, []);
   const detailsView = (reward) =>{
       return (
-        <Grid  container alignContent='space-between' spacing={2}>
+        <Grid  container alignContent='space-between' alignItems='center'  spacing={2}>
           <Grid item xs={6}>
              Total Reward
           </Grid>
@@ -115,7 +115,7 @@ export default function RewardCard({ reward }) {
           </Grid>
 
           <Grid item xs={6}>
-             Total Reward(USD)
+             Reward(USD)
           </Grid>
           <Grid item xs={6} align='right'>
             ${convertToInternationalCurrencySystem((Number(reward.rewardPerToken)/(10 ** reward.rewardToken.decimals )).toFixed(0) * reward.rewardTokenPrice)}
@@ -125,7 +125,6 @@ export default function RewardCard({ reward }) {
           </Grid>
           <Grid item xs={6} align='right'>
           <ClickAwayListener onClickAway={handleTooltipClose}>
-            <div>
               <Tooltip
                 PopperProps={{
                   disablePortal: true,
@@ -137,12 +136,11 @@ export default function RewardCard({ reward }) {
                 disableTouchListener
                 title="Copied"
               >
-                <Button onClick={handleCopy}>
-                <FileCopyIcon fontSize='small'/>
+                <Button color='primary' onClick={handleCopy}>
+                <FileCopyIcon  fontSize='small'/>
              {reward.gauge.gaugeAddress.substring(0,5)+'...'}
                 </Button>
               </Tooltip>
-            </div>
           </ClickAwayListener>
             
          
