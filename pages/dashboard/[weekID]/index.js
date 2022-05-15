@@ -247,7 +247,7 @@ function Voting({ changeTheme, theme }) {
           >
             <CartesianGrid strokeDasharray="6" vertical={false} /> <XAxis dataKey="symbol"  verticalAnchor="start" fontSize={14} angle={-25} textAnchor='end' height={70}/>
             <YAxis tickFormatter={convertToCurrencyWithSign} />
-            <Tooltip cursor={false} />
+            <Tooltip cursor={false} contentStyle={{color:'black'}}/>
             <Bar maxBarSize={30} dataKey="total" fill="#8884d8" > {
               chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={barColors[index % barColors.length]} />
