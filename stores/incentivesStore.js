@@ -337,96 +337,7 @@ class Store {
     }
   }
 
-  _getDefaultTokens = () => {
-    return [
-      {
-        address: '0x4e15361fd6b4bb609fa63c81a2be19d873717870',
-        symbol: 'FTM',
-        decimals: 18
-      },
-      {
-        address: '0x2ba592f78db6436527729929aaf6c908497cb200',
-        symbol: 'CREAM',
-        decimals: 18
-      },
-      {
-        address: '0x090185f2135308bad17527004364ebcc2d37e5f6',
-        symbol: 'SPELL',
-        decimals: 18
-      },
-      {
-        address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-        symbol: 'DAI',
-        decimals: 18
-      },
-      {
-        address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-        symbol: 'USDC',
-        decimals: 6
-      },
-      {
-        address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
-        symbol: 'LDO',
-        decimals: 18
-      },
-      {
-        address: '0xdbdb4d16eda451d0503b854cf79d55697f90c8df',
-        symbol: 'ALCX',
-        decimals: 18
-      },
-      {
-        address: '0x9D79d5B61De59D882ce90125b18F74af650acB93',
-        symbol: 'NSBT',
-        decimals: 6
-      },
-      {
-        address: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0',
-        symbol: 'MATIC',
-        decimals: 18
-      },
-      {
-        address: '0x92e187a03b6cd19cb6af293ba17f2745fd2357d5',
-        symbol: 'DUCK',
-        decimals: 18
-      },
-      {
-        address: '0x8207c1FfC5B6804F6024322CcF34F29c3541Ae26',
-        symbol: 'OGN',
-        decimals: 18
-      },
-      {
-        address: '0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2',
-        symbol: 'MTA',
-        decimals: 18
-      },
-      {
-        address: '0xd533a949740bb3306d119cc777fa900ba034cd52',
-        symbol: 'CRV',
-        decimals: 18
-      },
-      {
-        address: '0xcdf7028ceab81fa0c6971208e83fa7872994bee5',
-        symbol: 'T',
-        decimals: 18
-      },
-      {
-        address: '0xdb25f211ab05b1c97d595516f45794528a807ad8',
-        symbol: 'EURS',
-        decimals: 2
-      },
-      {
-        address: '0x31429d1856aD1377A8A0079410B297e1a9e214c2',
-        symbol: 'ANGLE',
-        decimals: 18,
-      },
-      {
-        address: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B',
-        symbol: 'CVX',
-        decimals: 18,
-      },
-
-    ]
-  }
+ 
   _getRewardToken = async () =>{
     const client = new ApolloClient({
       uri: gaugeGraphUrl,
@@ -483,7 +394,7 @@ class Store {
     }
 
     gauges = await this._getCurrentGaugeVotes(web3, account, gauges)
-
+    console.log(gauges)
     let myParam = null
 
     if(payload.content && payload.content.address) {
@@ -546,6 +457,8 @@ class Store {
           })
         }
       }
+    console.log(rewards)
+
       this.setStore({ rewards: rewards })
       this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
     })
@@ -554,6 +467,7 @@ class Store {
     if(!votes || votes.length === 0) {
       return null
     }
+    console.log(voteRewards)
     const voteRewards = await this._getVoteBribery(web3, account, votes)
     this.setStore({ voteRewards: voteRewards })
     this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
@@ -642,6 +556,8 @@ class Store {
       briberyV2.methods.gauges_per_reward(rewardTokenAddress).call()
     ]);
 
+    // console.log(rewardTokenAddress + " = " + gaugesPerRewardV2)
+
     let briberyResultsPromisesV2 = []
     if(gaugesPerRewardV2.length > 0) {
       briberyResultsPromisesV2 = gaugesPerRewardV2.map(async (gauge) => {
@@ -652,8 +568,8 @@ class Store {
           briberyV2.methods.last_user_claim(account.address, gauge, rewardTokenAddress).call(),
           briberyTokensContract.methods.tokens_for_bribe(account.address, gauge, rewardTokenAddress).call(),
           briberyV2.methods.reward_per_token(gauge, rewardTokenAddress).call(),
-        ]);
-
+        ]);console.log(rewardTokenAddress + " = " + gauge)
+        console.log(gauges.filter((g) => { return g.gaugeAddress.toLowerCase() === gauge.toLowerCase() }))
         return {
           version: 2,
           claimable,
