@@ -23,7 +23,8 @@ import {
   ADD_REWARD,
   ADD_REWARD_RETURNED,
   ADD_VOTE_REWARD,
-  ADD_VOTE_REWARD_RETURNED
+  ADD_VOTE_REWARD_RETURNED,
+  gaugeGraphUrl
 } from './constants';
 import { NextRouter } from 'next/router'
 
@@ -34,6 +35,7 @@ import { ERC20_ABI, BRIBERY_ABI, GAUGE_CONTROLLER_ABI, GAUGE_CONTRACT_ABI, VOTE_
 import stores from './';
 import { bnDec } from '../utils';
 import BigNumber from 'bignumber.js';
+import { ApolloClient, gql, InMemoryCache, useQuery } from '@apollo/client';
 
 const fetch = require('node-fetch');
 
@@ -191,12 +193,17 @@ class Store {
       let lpTokenAddress = ''
 
       if(['0', '5', '6'].includes(gaugeType)) {
-        const gauge = new web3.eth.Contract(GAUGE_CONTRACT_ABI, gaugeAddress)
-        lpTokenAddress = await gauge.methods.lp_token().call()
-        // if not 0, we cant get LP token info cause it is on a different chain
-        const lpToken = new web3.eth.Contract(ERC20_ABI, lpTokenAddress)
-        name = await lpToken.methods.name().call()
-      } else {
+        try {
+          const gauge = new web3.eth.Contract(GAUGE_CONTRACT_ABI, gaugeAddress)
+          lpTokenAddress = await gauge.methods.lp_token().call()
+          // if not 0, we cant get LP token info cause it is on a different chain
+          const lpToken = new web3.eth.Contract(ERC20_ABI, lpTokenAddress)
+          name = await lpToken.methods.name().call()
+        }catch(err){
+          console.log(err);
+        }
+      }
+      if(name === "Unknown") {
         //manually map gauge names
         switch (gaugeAddress) {
           case '0xb9C05B8EE41FDCbd9956114B3aF15834FDEDCb54':
@@ -287,6 +294,9 @@ class Store {
           case '0xd0698b2E41C42bcE42B51f977F962Fd127cF82eA':
             name = 'Curve.fi 4POOL-f Gauge Deposit'
             break;
+          case '0xc5ae4b5f86332e70f3205a8151ee9ed9f71e0797':
+            name = 'Curve.fi sUSD3CRV-f (sUSD3CRV-f-gauge)'
+            break;
           default:
         }
       }
@@ -335,106 +345,46 @@ class Store {
     }
   }
 
-  _getDefaultTokens = () => {
-    return [
-      {
-        address: '0x4e15361fd6b4bb609fa63c81a2be19d873717870',
-        symbol: 'FTM',
-        decimals: 18
-      },
-      {
-        address: '0x2ba592f78db6436527729929aaf6c908497cb200',
-        symbol: 'CREAM',
-        decimals: 18
-      },
-      {
-        address: '0x090185f2135308bad17527004364ebcc2d37e5f6',
-        symbol: 'SPELL',
-        decimals: 18
-      },
-      {
-        address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-        symbol: 'DAI',
-        decimals: 18
-      },
-      {
-        address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-        symbol: 'USDC',
-        decimals: 6
-      },
-      {
-        address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
-        symbol: 'LDO',
-        decimals: 18
-      },
-      {
-        address: '0xdbdb4d16eda451d0503b854cf79d55697f90c8df',
-        symbol: 'ALCX',
-        decimals: 18
-      },
-      {
-        address: '0x9D79d5B61De59D882ce90125b18F74af650acB93',
-        symbol: 'NSBT',
-        decimals: 6
-      },
-      {
-        address: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0',
-        symbol: 'MATIC',
-        decimals: 18
-      },
-      {
-        address: '0x92e187a03b6cd19cb6af293ba17f2745fd2357d5',
-        symbol: 'DUCK',
-        decimals: 18
-      },
-      {
-        address: '0x8207c1FfC5B6804F6024322CcF34F29c3541Ae26',
-        symbol: 'OGN',
-        decimals: 18
-      },
-      {
-        address: '0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2',
-        symbol: 'MTA',
-        decimals: 18
-      },
-      {
-        address: '0xd533a949740bb3306d119cc777fa900ba034cd52',
-        symbol: 'CRV',
-        decimals: 18
-      },
-      {
-        address: '0xcdf7028ceab81fa0c6971208e83fa7872994bee5',
-        symbol: 'T',
-        decimals: 18
-      },
-      {
-        address: '0xdb25f211ab05b1c97d595516f45794528a807ad8',
-        symbol: 'EURS',
-        decimals: 2
-      },
-      {
-        address: '0x31429d1856aD1377A8A0079410B297e1a9e214c2',
-        symbol: 'ANGLE',
-        decimals: 18,
-      },
-      {
-        address: '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B',
-        symbol: 'CVX',
-        decimals: 18,
-      },
-      {
-        address: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
-        symbol: 'SNX',
-        decimals: 18,
-      },
-      {
-        address: '0x01ba67aac7f75f647d94220cc98fb30fcc5105bf',
-        symbol: 'LYRA',
-        decimals: 18
-      }
-    ]
-  }
 
+  _getRewardToken = async () =>{
+    const client = new ApolloClient({
+      uri: gaugeGraphUrl,
+      cache: new InMemoryCache(),
+    })
+    const weekId = Math.trunc(Date.now()/(WEEK * 1000)).toString()
+    const query = gql`
+    query Weeks($weekID: String){
+      week(id: $weekID) {
+        id
+        stats {
+          token {
+            address: id
+            symbol
+            decimals
+          }
+        }
+      }
+    }
+   `;
+  const {data} = await client.query({query: query,variables:{weekID: weekId}});
+  const tokens = data.week.stats.map(stat =>stat.token).filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t.address === value.address
+        ))
+      )
+    return tokens
+  }
+  _tokenPriceLogo= async (token)=>{
+    let url = 'https://api.coingecko.com/api/v3/coins/ethereum/contract/' + token
+
+    const response = await fetch(url);
+    const body = await response.json();
+    const data = {
+      price: body.market_data.current_price.usd,
+      logo: body.image.large
+    }
+    return data;
+  }
   getBalances = async (payload) => {
     const web3 = await stores.accountStore.getWeb3Provider();
     if (!web3) {
@@ -452,7 +402,7 @@ class Store {
     }
 
     gauges = await this._getCurrentGaugeVotes(web3, account, gauges)
-
+    console.log(gauges)
     let myParam = null
 
     if(payload.content && payload.content.address) {
@@ -465,8 +415,7 @@ class Store {
     const rewardTokenAddress = myParam
 
     // FTM, CREAM, MIM, DAI, USDC,
-    const defaultTokens = this._getDefaultTokens()
-
+    const defaultTokens =await this._getRewardToken()
     //If it is a valid token, we add it to the search list
     if(rewardTokenAddress && web3.utils.isAddress(rewardTokenAddress)) {
       let includesToken = false
@@ -482,7 +431,6 @@ class Store {
         defaultTokens.push(rewardToken)
       }
     }
-
     async.map(defaultTokens, async (token, callback) => {
       const bribery = await this._getBribery(web3, account, gauges, defaultTokens, token.address)
       if(callback) {
@@ -490,7 +438,7 @@ class Store {
       } else {
         return bribery
       }
-    }, (err, briberies) => {
+    }, async (err, briberies) => {
       if(err) {
         this.emitter.emit(ERROR, err)
       }
@@ -501,6 +449,7 @@ class Store {
         let bribery = flatBriberies[j]
         for(let i = 0; i < bribery.length; i++) {
           let bribe = bribery[i]
+          const tokenData = await this._tokenPriceLogo(bribe.rewardToken.address)
           rewards.push({
             activePeriod: bribe.activePeriod,
             rewardsUnlock: BigNumber(bribe.activePeriod).plus(WEEK).toFixed(0),
@@ -510,10 +459,13 @@ class Store {
             gauge: bribe.gauge,
             tokensForBribe: BigNumber(bribe.tokensForBribe).div(10**bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
             rewardPerToken: bribe.rewardPerToken,
-            rewardToken: bribe.rewardToken
+            rewardToken: bribe.rewardToken,
+            rewardTokenPrice: tokenData.price,
+            rewardTokenLogo: tokenData.logo
           })
         }
       }
+    console.log(rewards)
 
       this.setStore({ rewards: rewards })
       this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
@@ -523,7 +475,7 @@ class Store {
     if(!votes || votes.length === 0) {
       return null
     }
-
+    console.log(voteRewards)
     const voteRewards = await this._getVoteBribery(web3, account, votes)
     this.setStore({ voteRewards: voteRewards })
     this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
@@ -612,6 +564,8 @@ class Store {
       briberyV2.methods.gauges_per_reward(rewardTokenAddress).call()
     ]);
 
+    // console.log(rewardTokenAddress + " = " + gaugesPerRewardV2)
+
     let briberyResultsPromisesV2 = []
     if(gaugesPerRewardV2.length > 0) {
       briberyResultsPromisesV2 = gaugesPerRewardV2.map(async (gauge) => {
@@ -622,8 +576,8 @@ class Store {
           briberyV2.methods.last_user_claim(account.address, gauge, rewardTokenAddress).call(),
           briberyTokensContract.methods.tokens_for_bribe(account.address, gauge, rewardTokenAddress).call(),
           briberyV2.methods.reward_per_token(gauge, rewardTokenAddress).call(),
-        ]);
-
+        ]);console.log(rewardTokenAddress + " = " + gauge)
+        console.log(gauges.filter((g) => { return g.gaugeAddress.toLowerCase() === gauge.toLowerCase() }))
         return {
           version: 2,
           claimable,

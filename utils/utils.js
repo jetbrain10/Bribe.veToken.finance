@@ -75,7 +75,7 @@ export function convertToInternationalCurrencySystem (labelValue) {
   return Math.abs(Number(labelValue)) >= 1.0e+9
 
   ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2) + "B"
-  // Six Zeroes for Millions 
+  // Six Zeroes for Millions
   : Math.abs(Number(labelValue)) >= 1.0e+6
 
   ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2) + "M"
@@ -91,22 +91,7 @@ export function convertToInternationalCurrencySystem (labelValue) {
 export function convertToCurrencyWithSign(labelValue){
   return '$' + convertToInternationalCurrencySystem(labelValue)
 }
-export const tokenOracle= async (tokens)=>{
-  let url = 'https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses='
-  for(let i = 0;i < tokens.length;i++){
-      url += tokens[i]
-      if(i + 1 < tokens.length){
-          url += ','
-      }
-  }
-  url += '&vs_currencies=usd'
-  const response = await fetch(url);
-  const body = await response.json();
-
-  return body;
-}
-export 
-const getManualGaugeName = (gaugeAddress)=>{
+export const getManualGaugeName = (gaugeAddress)=>{
   let name = ''
   switch (gaugeAddress) {
     case '0xb9c05b8ee41fdcbd9956114b3af15834fdedcb54':
@@ -138,6 +123,9 @@ const getManualGaugeName = (gaugeAddress)=>{
       break;
     case '0xd8b712d29381748db89c36bca0138d7c75866ddf':
       name = 'Curve.fi Factory USD Metapool: Magic Internet Money 3Pool'
+      break;
+    case '0xc5ae4b5f86332e70f3205a8151ee9ed9f71e0797':
+      name = 'Curve.fi sUSD3CRV-f Gauge Deposit'
       break;
     default:
   }
@@ -176,6 +164,9 @@ export const getGaugeSymbol= (gaugeAddress)=>{
       break;
     case '0xd8b712d29381748db89c36bca0138d7c75866ddf':
       name = 'MIM-3LP3CRV'
+      break;
+    case '0xc5ae4b5f86332e70f3205a8151ee9ed9f71e0797':
+      name = 'sUSD3CRV-f-gauge'
       break;
     default:
   }
