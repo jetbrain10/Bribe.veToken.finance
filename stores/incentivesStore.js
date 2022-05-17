@@ -193,12 +193,17 @@ class Store {
       let lpTokenAddress = ''
 
       if(['0', '5', '6'].includes(gaugeType)) {
-        const gauge = new web3.eth.Contract(GAUGE_CONTRACT_ABI, gaugeAddress)
-        lpTokenAddress = await gauge.methods.lp_token().call()
-        // if not 0, we cant get LP token info cause it is on a different chain
-        const lpToken = new web3.eth.Contract(ERC20_ABI, lpTokenAddress)
-        name = await lpToken.methods.name().call()
-      } else {
+        try {
+          const gauge = new web3.eth.Contract(GAUGE_CONTRACT_ABI, gaugeAddress)
+          lpTokenAddress = await gauge.methods.lp_token().call()
+          // if not 0, we cant get LP token info cause it is on a different chain
+          const lpToken = new web3.eth.Contract(ERC20_ABI, lpTokenAddress)
+          name = await lpToken.methods.name().call()
+        }catch(err){
+          console.log(err);
+        }
+      }
+      if(name === "Unknown") {
         //manually map gauge names
         switch (gaugeAddress) {
           case '0xb9C05B8EE41FDCbd9956114B3aF15834FDEDCb54':
@@ -289,6 +294,9 @@ class Store {
           case '0xd0698b2E41C42bcE42B51f977F962Fd127cF82eA':
             name = 'Curve.fi 4POOL-f Gauge Deposit'
             break;
+          case '0xc5ae4b5f86332e70f3205a8151ee9ed9f71e0797':
+            name = 'Curve.fi sUSD3CRV-f (sUSD3CRV-f-gauge)'
+            break;
           default:
         }
       }
@@ -337,7 +345,7 @@ class Store {
     }
   }
 
- 
+
   _getRewardToken = async () =>{
     const client = new ApolloClient({
       uri: gaugeGraphUrl,
@@ -368,7 +376,7 @@ class Store {
   }
   _tokenPriceLogo= async (token)=>{
     let url = 'https://api.coingecko.com/api/v3/coins/ethereum/contract/' + token
-    
+
     const response = await fetch(url);
     const body = await response.json();
     const data = {
