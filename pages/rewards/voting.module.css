@@ -107,7 +107,7 @@
 
 .cardsContainer {
   margin: 0 auto;
-  padding: 0px 80px;
+  padding: 0px 0px;
   /* display: grid; */
   /* grid-template-columns: calc(33% - 15px) calc(33% - 15px) calc(33% - 15px); */
   /* gap: 30px; */
