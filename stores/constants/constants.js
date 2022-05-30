@@ -63,4 +63,4 @@ export const VOTE_REWARD_CLAIMED = 'VOTE_REWARD_CLAIMED'
 export const MAX_UINT256 = new BigNumber(2).pow(256).minus(1).toFixed(0);
 export const WEEK = BigNumber(86400).times(7).toFixed(0);
 
-export const gaugeGraphUrl = 'https://api.studio.thegraph.com/query/24203/bribe-crv/0.0.43/'
+export const gaugeGraphUrl = 'https://api.thegraph.com/subgraphs/name/jaqensyrio/bribecrv'

@@ -377,6 +377,24 @@ class Store {
     }
     return data;
   }
+  _getClaimedRewards = async (gauge, rewardToken) =>{
+    const client = new ApolloClient({
+      uri: gaugeGraphUrl,
+      cache: new InMemoryCache(),
+    })
+    const id = Math.trunc(Date.now()/(WEEK * 1000)).toString() + '-' + rewardToken + '-' + gauge
+    const query = gql`
+    query ClaimReward($id: String){
+      
+        stat(id: $id) {
+          weeklyClaimedRewards
+        }
+    }
+   `;
+  const {data} = await client.query({query: query,variables:{id: id}});
+    return data?.stat?.weeklyClaimedRewards ?? '0'
+  }
+
   getBalances = async (payload) => {
     const web3 = await stores.accountStore.getWeb3Provider();
     if (!web3) {
@@ -394,7 +412,6 @@ class Store {
     }
 
     gauges = await this._getCurrentGaugeVotes(web3, account, gauges)
-    console.log(gauges)
     let myParam = null
 
     if(payload.content && payload.content.address) {
@@ -451,13 +468,13 @@ class Store {
             gauge: bribe.gauge,
             tokensForBribe: BigNumber(bribe.tokensForBribe).div(10**bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
             rewardPerToken: bribe.rewardPerToken,
+            claimedRewards: bribe.claimedRewards,
             rewardToken: bribe.rewardToken,
             rewardTokenPrice: tokenData.price,
             rewardTokenLogo: tokenData.logo
           })
         }
       }
-    console.log(rewards)
 
       this.setStore({ rewards: rewards })
       this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
@@ -467,7 +484,6 @@ class Store {
     if(!votes || votes.length === 0) {
       return null
     }
-    console.log(voteRewards)
     const voteRewards = await this._getVoteBribery(web3, account, votes)
     this.setStore({ voteRewards: voteRewards })
     this.emitter.emit(INCENTIVES_BALANCES_RETURNED, []);
@@ -556,8 +572,6 @@ class Store {
       briberyV2.methods.gauges_per_reward(rewardTokenAddress).call()
     ]);
 
-    // console.log(rewardTokenAddress + " = " + gaugesPerRewardV2)
-
     let briberyResultsPromisesV2 = []
     if(gaugesPerRewardV2.length > 0) {
       briberyResultsPromisesV2 = gaugesPerRewardV2.map(async (gauge) => {
@@ -568,8 +582,9 @@ class Store {
           briberyV2.methods.last_user_claim(account.address, gauge, rewardTokenAddress).call(),
           briberyTokensContract.methods.tokens_for_bribe(account.address, gauge, rewardTokenAddress).call(),
           briberyV2.methods.reward_per_token(gauge, rewardTokenAddress).call(),
-        ]);console.log(rewardTokenAddress + " = " + gauge)
-        console.log(gauges.filter((g) => { return g.gaugeAddress.toLowerCase() === gauge.toLowerCase() }))
+        ]);
+
+        const claimedRewards =await this._getClaimedRewards(gauge.toString().toLowerCase(),rewardTokenAddress.toString())
         return {
           version: 2,
           claimable,
@@ -577,6 +592,7 @@ class Store {
           activePeriod,
           tokensForBribe,
           rewardPerToken,
+          claimedRewards,
           canClaim: BigNumber(block).lt(BigNumber(activePeriod).plus(WEEK)),
           hasClaimed: BigNumber(lastUserClaim).eq(activePeriod),
           gauge: gauges.filter((g) => { return g.gaugeAddress.toLowerCase() === gauge.toLowerCase() })[0],
