@@ -411,8 +411,6 @@ class Store {
   for (let i = 0; i < data.rewards.length; i++) {
     rewards += Number(data.rewards[i].amount)
  }
- console.log(rewards)
- console.log(claimed)
     return rewards - claimed
   }
 
@@ -597,7 +595,7 @@ class Store {
     if(gaugesPerRewardV2.length > 0) {
       briberyResultsPromisesV2 = gaugesPerRewardV2.map(async (gauge) => {
 
-        const [activePeriod, claimable, lastUserClaim, tokensForBribe, rewardPerTokenS] = await Promise.all([
+        const [activePeriod, claimable, lastUserClaim, tokensForBribe, rewardPerToken] = await Promise.all([
           briberyV2.methods.active_period(gauge, rewardTokenAddress).call(),
           briberyV2.methods.claimable(account.address, gauge, rewardTokenAddress).call(),
           briberyV2.methods.last_user_claim(account.address, gauge, rewardTokenAddress).call(),
@@ -610,11 +608,6 @@ class Store {
          gaugeController.methods.points_weight(gauge, period).call()
 
       ]);
-      console.log(Date.now())
-      console.log(period)
-      console.log(pointWeight)
-      const rewardPerToken = Number(rewardPerTokenS) * Number(pointWeight.slope) / 10 ** 18
-      console.log(rewardPerToken)
         const availableRewards = await this._getAvailableRewards(gauge.toString().toLowerCase(),rewardTokenAddress.toString())
         return {
           version: 2,
