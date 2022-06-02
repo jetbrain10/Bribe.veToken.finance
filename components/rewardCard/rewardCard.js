@@ -111,14 +111,14 @@ export default function RewardCard({ reward }) {
              Total Reward
           </Grid>
           <Grid item xs={6} align='right'>
-            {convertToInternationalCurrencySystem(((Number(reward.rewardPerToken) - Number(reward.claimedRewards))/(10 ** reward.rewardToken.decimals )).toFixed(0))} ${reward.rewardToken.symbol}
+            {convertToInternationalCurrencySystem(((Number(reward.availableRewards))/(10 ** reward.rewardToken.decimals )).toFixed(0))} ${reward.rewardToken.symbol}
           </Grid>
 
           <Grid item xs={6}>
              Reward(USD)
           </Grid>
           <Grid item xs={6} align='right'>
-            ${convertToInternationalCurrencySystem(((Number(reward.rewardPerToken) - Number(reward.claimedRewards))/(10 ** reward.rewardToken.decimals )).toFixed(0) * reward.rewardTokenPrice)}
+            ${convertToInternationalCurrencySystem((( Number(reward.availableRewards))/(10 ** reward.rewardToken.decimals )).toFixed(0) * reward.rewardTokenPrice)}
           </Grid>
           <Grid item xs={6}>
              Gauge Address

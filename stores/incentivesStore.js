@@ -385,22 +385,35 @@ class Store {
     }
     return data;
   }
-  _getClaimedRewards = async (gauge, rewardToken) =>{
+  _getAvailableRewards = async (gaugeId, tokenId) =>{
     const client = new ApolloClient({
       uri: gaugeGraphUrl,
       cache: new InMemoryCache(),
     })
-    const id = Math.trunc(Date.now()/(WEEK * 1000)).toString() + '-' + rewardToken + '-' + gauge
+    // const id = Math.trunc(Date.now()/(WEEK * 1000)).toString() + '-' + rewardToken + '-' + gauge
     const query = gql`
-    query ClaimReward($id: String){
-      
-        stat(id: $id) {
-          weeklyClaimedRewards
-        }
+    query ClaimReward($tokenId: String, $gaugeId: String){
+      stats(where: {token: $tokenId, gauge:  $gaugeId}){
+        weeklyClaimedRewards
+      }
+      rewards( where: {rewardToken:  $tokenId, gauge:  $gaugeId}) {
+        amount
+      }
     }
    `;
-  const {data} = await client.query({query: query,variables:{id: id}});
-    return data?.stat?.weeklyClaimedRewards ?? '0'
+  const {data} = await client.query({query: query,variables:{tokenId: tokenId, gaugeId: gaugeId}});
+  let claimed = 0
+  let rewards = 0
+  for (let i = 0; i < data.stats.length; i++) {
+     claimed += Number(data.stats[i].weeklyClaimedRewards)
+    
+  }
+  for (let i = 0; i < data.rewards.length; i++) {
+    rewards += Number(data.rewards[i].amount)
+ }
+ console.log(rewards)
+ console.log(claimed)
+    return rewards - claimed
   }
 
   getBalances = async (payload) => {
@@ -476,7 +489,7 @@ class Store {
             gauge: bribe.gauge,
             tokensForBribe: BigNumber(bribe.tokensForBribe).div(10**bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
             rewardPerToken: bribe.rewardPerToken,
-            claimedRewards: bribe.claimedRewards,
+            availableRewards: bribe.availableRewards,
             rewardToken: bribe.rewardToken,
             rewardTokenPrice: tokenData.price,
             rewardTokenLogo: tokenData.logo
@@ -584,15 +597,25 @@ class Store {
     if(gaugesPerRewardV2.length > 0) {
       briberyResultsPromisesV2 = gaugesPerRewardV2.map(async (gauge) => {
 
-        const [activePeriod, claimable, lastUserClaim, tokensForBribe, rewardPerToken] = await Promise.all([
+        const [activePeriod, claimable, lastUserClaim, tokensForBribe, rewardPerTokenS] = await Promise.all([
           briberyV2.methods.active_period(gauge, rewardTokenAddress).call(),
           briberyV2.methods.claimable(account.address, gauge, rewardTokenAddress).call(),
           briberyV2.methods.last_user_claim(account.address, gauge, rewardTokenAddress).call(),
           briberyTokensContract.methods.tokens_for_bribe(account.address, gauge, rewardTokenAddress).call(),
           briberyV2.methods.reward_per_token(gauge, rewardTokenAddress).call(),
         ]);
+    const gaugeController = new web3.eth.Contract(GAUGE_CONTROLLER_ABI, GAUGE_CONTROLLER_ADDRESS)
+    const period = ((Date.now()/1000).toFixed(0) / WEEK).toFixed(0)* WEEK
+      const [pointWeight] = await Promise.all([
+         gaugeController.methods.points_weight(gauge, period).call()
 
-        const claimedRewards =await this._getClaimedRewards(gauge.toString().toLowerCase(),rewardTokenAddress.toString())
+      ]);
+      console.log(Date.now())
+      console.log(period)
+      console.log(pointWeight)
+      const rewardPerToken = Number(rewardPerTokenS) * Number(pointWeight.slope) / 10 ** 18
+      console.log(rewardPerToken)
+        const availableRewards = await this._getAvailableRewards(gauge.toString().toLowerCase(),rewardTokenAddress.toString())
         return {
           version: 2,
           claimable,
@@ -600,7 +623,7 @@ class Store {
           activePeriod,
           tokensForBribe,
           rewardPerToken,
-          claimedRewards,
+          availableRewards,
           canClaim: BigNumber(block).lt(BigNumber(activePeriod).plus(WEEK)),
           hasClaimed: BigNumber(lastUserClaim).eq(activePeriod),
           gauge: gauges.filter((g) => { return g.gaugeAddress.toLowerCase() === gauge.toLowerCase() })[0],
