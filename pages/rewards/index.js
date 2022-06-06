@@ -422,7 +422,7 @@ function Voting({ changeTheme, theme }) {
                   <div className={classes.cardsContainer}>
                     {
                       claimableRewards.map((reward, idx) => {
-                        return <RewardCard reward={reward} key={idx} />
+                        return <RewardCard width={200} reward={reward} key={idx} />
                       })
                     }
                     {
