@@ -64,13 +64,13 @@ const theme = createTheme({
 
 export default function RewardCard({ reward }) {
 
-  const [ checked, setChecked ] = useState(false)
-  const [ claiming, setClaiming ] = useState(false)
-  const [ voting, setVoting ] = useState(false)
+  const [checked, setChecked] = useState(false)
+  const [claiming, setClaiming] = useState(false)
+  const [voting, setVoting] = useState(false)
 
   const onClaim = () => {
-    if(!claiming) {
-      stores.dispatcher.dispatch({ type: CLAIM_REWARD, content: { reward }})
+    if (!claiming) {
+      stores.dispatcher.dispatch({ type: CLAIM_REWARD, content: { reward } })
       setClaiming(true)
     }
   }
@@ -104,79 +104,79 @@ export default function RewardCard({ reward }) {
       stores.emitter.removeListener(REWARD_CLAIMED, claimReturned)
     };
   }, []);
-  const detailsView = (reward) =>{
-      return (
-        <Grid  container alignContent='space-between' alignItems='center'  spacing={2}>
-          <Grid item xs={6}>
-             Total Reward
-          </Grid>
-          <Grid item xs={6} align='right'>
-            {convertToInternationalCurrencySystem(((Number(reward.availableRewards))/(10 ** reward.rewardToken.decimals )).toFixed(0))} ${reward.rewardToken.symbol}
-          </Grid>
-
-          <Grid item xs={6}>
-             Reward(USD)
-          </Grid>
-          <Grid item xs={6} align='right'>
-            ${convertToInternationalCurrencySystem((( Number(reward.availableRewards))/(10 ** reward.rewardToken.decimals )).toFixed(0) * reward.rewardTokenPrice)}
-          </Grid>
-          <Grid item xs={6}>
-             Gauge Address
-          </Grid>
-          <Grid item xs={6} align='right'>
-          <ClickAwayListener onClickAway={handleTooltipClose}>
-              <Tooltip
-                PopperProps={{
-                  disablePortal: true,
-                }}
-                onClose={handleTooltipClose}
-                open={toolTipOpen}
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
-                title="Copied"
-              >
-                <Button color='primary' onClick={handleCopy}>
-                <FileCopyIcon  fontSize='small'/>
-             {reward.gauge.gaugeAddress.substring(0,5)+'...'}
-                </Button>
-              </Tooltip>
-          </ClickAwayListener>
-            
-         
-          
-          </Grid>
+  const detailsView = (reward) => {
+    return (
+      <Grid container alignContent='space-between' alignItems='center' spacing={2}>
+        <Grid item xs={6}>
+          Total Reward
         </Grid>
-      )
+        <Grid item xs={6} align='right'>
+          {convertToInternationalCurrencySystem(((Number(reward.availableRewards)) / (10 ** reward.rewardToken.decimals)).toFixed(0))} ${reward.rewardToken.symbol}
+        </Grid>
+
+        <Grid item xs={6}>
+          Reward(USD)
+        </Grid>
+        <Grid item xs={6} align='right'>
+          ${convertToInternationalCurrencySystem(((Number(reward.availableRewards)) / (10 ** reward.rewardToken.decimals)).toFixed(0) * reward.rewardTokenPrice)}
+        </Grid>
+        <Grid item xs={6}>
+          Gauge Address
+        </Grid>
+        <Grid item xs={6} align='right'>
+          <ClickAwayListener onClickAway={handleTooltipClose}>
+            <Tooltip
+              PopperProps={{
+                disablePortal: true,
+              }}
+              onClose={handleTooltipClose}
+              open={toolTipOpen}
+              disableFocusListener
+              disableHoverListener
+              disableTouchListener
+              title="Copied"
+            >
+              <Button color='primary' onClick={handleCopy}>
+                <FileCopyIcon fontSize='small' />
+                {reward.gauge.gaugeAddress.substring(0, 5) + '...'}
+              </Button>
+            </Tooltip>
+          </ClickAwayListener>
+
+
+
+        </Grid>
+      </Grid>
+    )
   }
   const renderClaimable = () => {
     return (
       <>
         {detailsView(reward)}
-        <Typography className={ classes.descriptionText} align='center' >{ formatCurrency(reward.claimable) } { reward.rewardToken.symbol }</Typography>
-        <Typography className={ classes.descriptionSubText } align='center'>Your reward for voting for {reward.gauge.name}</Typography>
+        <Typography className={classes.descriptionText} align='center' >{formatCurrency(reward.claimable)} {reward.rewardToken.symbol}</Typography>
+        <Typography className={classes.descriptionSubText} align='center'>Your reward for voting for {reward.gauge.name}</Typography>
         {
           reward.hasClaimed &&
           <Button
-            className={ classes.tryButton }
+            className={classes.tryButton}
             variant='outlined'
             disableElevation
             color='primary'
           >
-            <Typography className={ classes.buttonLabel }>Reward Claimed</Typography>
+            <Typography className={classes.buttonLabel}>Reward Claimed</Typography>
           </Button>
         }
         {
           !reward.hasClaimed &&
           <Button
-            className={ classes.tryButton }
+            className={classes.tryButton}
             variant='outlined'
             disableElevation
-            onClick={ onClaim }
+            onClick={onClaim}
             color='primary'
-            disabled={ claiming }
+            disabled={claiming}
           >
-            <Typography className={ classes.buttonLabel }>{ claiming ? 'Claiming ...' : 'Claim Reward'}</Typography>
+            <Typography className={classes.buttonLabel}>{claiming ? 'Claiming ...' : 'Claim Reward'}</Typography>
           </Button>
         }
       </>
@@ -187,34 +187,34 @@ export default function RewardCard({ reward }) {
 
     return (
       <>
-              {detailsView(reward)}
+        {detailsView(reward)}
 
-        <Typography className={ classes.descriptionPreText } align='center'>Current receive amount:</Typography>
-        <Typography className={ classes.descriptionText} align='center' >{ formatCurrency(BigNumber(reward.tokensForBribe).times(reward?.gauge?.votes?.userVoteSlopePercent ?? 0).div(100)) } { reward.rewardToken.symbol }</Typography>
+        <Typography className={classes.descriptionPreText} align='center'>Current receive amount:</Typography>
+        <Typography className={classes.descriptionText} align='center' >{formatCurrency(BigNumber(reward.tokensForBribe).times(reward?.gauge?.votes?.userVoteSlopePercent ?? 0).div(100))} {reward.rewardToken.symbol}</Typography>
         <Box m={2}>
-        
+
         </Box>
-       
-        
-        <Typography className={ classes.descriptionSubText } align='center'>100% vote for {reward?.gauge.name} gives you {formatCurrency(reward.tokensForBribe)} { reward.rewardToken.symbol }</Typography>
-        <Typography className={ classes.descriptionUnlock } align='center'>Unlocks {moment.unix(reward.rewardsUnlock).fromNow()}</Typography>
-      
+
+
+        <Typography className={classes.descriptionSubText} align='center'>100% vote for {reward?.gauge.name} gives you {formatCurrency(reward.tokensForBribe)} {reward.rewardToken.symbol}</Typography>
+        <Typography className={classes.descriptionUnlock} align='center'>Unlocks {moment.unix(reward.rewardsUnlock).fromNow()}</Typography>
+
         <Button
-          className={ classes.tryButton }
+          className={classes.tryButton}
           variant='outlined'
           disableElevation
-          onClick={ onVote }
+          onClick={onVote}
           color='primary'
-          disabled={ voting }
+          disabled={voting}
         >
-          <Typography className={ classes.buttonLabel }>{ voting ? 'Voting ...' : 'Cast Vote' }</Typography>
+          <Typography className={classes.buttonLabel}>{voting ? 'Voting ...' : 'Cast Vote'}</Typography>
         </Button>
       </>
     )
   }
 
   const getContainerClass = () => {
-    if(BigNumber(reward.claimable).gt(0)) {
+    if (BigNumber(reward.claimable).gt(0)) {
       return classes.chainContainerPositive
     } else if (BigNumber(reward?.gauge?.votes?.userVoteSlopePercent ?? 0).gt(0)) {
       return classes.chainContainerPositive
@@ -223,17 +223,17 @@ export default function RewardCard({ reward }) {
     }
 
   }
-  if(!reward.gauge){
+  if (!reward.gauge) {
     return null
   }
   return (
-    <Paper elevation={ 1 } className={ getContainerClass() } key={ reward.id } >
+    <Paper elevation={1} className={getContainerClass()} key={reward.id} >
       <ThemeProvider theme={theme}>
-        <div className={ classes.topInfo }>
-          <img 
-      src={reward.rewardTokenLogo}
-      height={80}
-      className={ classes.avatar } />
+        <div className={classes.topInfo}>
+          <img
+            src={reward.rewardTokenLogo}
+            height={80}
+            className={classes.avatar} />
           {
             BigNumber(reward.claimable).gt(0) && renderClaimable()
           }

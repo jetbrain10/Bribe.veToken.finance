@@ -24,7 +24,8 @@ import {
   ADD_REWARD_RETURNED,
   ADD_VOTE_REWARD,
   ADD_VOTE_REWARD_RETURNED,
-  gaugeGraphUrl
+  gaugeGraphUrl,
+  MINIMUM_BRIBE
 } from './constants';
 import { NextRouter } from 'next/router'
 
@@ -124,7 +125,7 @@ class Store {
       const result = await Promise.all(promises);
 
       return result
-    } catch(ex) {
+    } catch (ex) {
       console.log("------------------------------------")
       console.log(`exception thrown in _getVotes(${web3})`)
       console.log(ex)
@@ -144,7 +145,7 @@ class Store {
         vote,
         rewardsPerVote,
       }
-    } catch(ex) {
+    } catch (ex) {
       console.log("------------------------------------")
       console.log(`exception thrown in 4(${web3}, ${votesSourceContract}, ${votesBriberyContract}, ${index})`)
       console.log(ex)
@@ -173,7 +174,7 @@ class Store {
       })
 
       return res
-    } catch(ex) {
+    } catch (ex) {
       console.log("------------------------------------")
       console.log(`exception thrown in _getGauges(${web3})`)
       console.log(ex)
@@ -192,18 +193,18 @@ class Store {
       let name = 'Unknown'
       let lpTokenAddress = ''
 
-      if(['0', '5', '6'].includes(gaugeType)) {
+      if (['0', '5', '6'].includes(gaugeType)) {
         try {
           const gauge = new web3.eth.Contract(GAUGE_CONTRACT_ABI, gaugeAddress)
           lpTokenAddress = await gauge.methods.lp_token().call()
           // if not 0, we cant get LP token info cause it is on a different chain
           const lpToken = new web3.eth.Contract(ERC20_ABI, lpTokenAddress)
           name = await lpToken.methods.name().call()
-        }catch(err){
+        } catch (err) {
           console.log(err);
         }
       }
-      if(name === "Unknown") {
+      if (name === "Unknown") {
         //manually map gauge names
         switch (gaugeAddress) {
           case '0xb9C05B8EE41FDCbd9956114B3aF15834FDEDCb54':
@@ -310,7 +311,7 @@ class Store {
         gaugeTypeName: this._mapGaugeTypeToName(gaugeType),
         logo: '/unknown-logo.png'
       }
-    } catch(ex) {
+    } catch (ex) {
       console.log("------------------------------------")
       console.log(`exception thrown in _getGaugeInfo(${web3}, ${gaugeController}, ${index})`)
       console.log(ex)
@@ -346,12 +347,12 @@ class Store {
   }
 
 
-  _getRewardToken = async () =>{
+  _getRewardToken = async () => {
     const client = new ApolloClient({
       uri: gaugeGraphUrl,
       cache: new InMemoryCache(),
     })
-    const weekId = Math.trunc(Date.now()/(WEEK * 1000)).toString()
+    const weekId = Math.trunc(Date.now() / (WEEK * 1000)).toString()
     const query = gql`
     query Weeks($weekID: String){
       week(id: $weekID) {
@@ -366,15 +367,15 @@ class Store {
       }
     }
    `;
-  const {data} = await client.query({query: query,variables:{weekID: weekId}});
-  const tokens = data.week.stats.map(stat =>stat.token).filter((value, index, self) =>
-        index === self.findIndex((t) => (
-          t.address === value.address
-        ))
-      )
+    const { data } = await client.query({ query: query, variables: { weekID: weekId } });
+    const tokens = data.week.stats.map(stat => stat.token).filter((value, index, self) =>
+      index === self.findIndex((t) => (
+        t.address === value.address
+      ))
+    )
     return tokens
   }
-  _tokenPriceLogo= async (token)=>{
+  _tokenPriceLogo = async (token) => {
     let url = 'https://api.coingecko.com/api/v3/coins/ethereum/contract/' + token
 
     const response = await fetch(url);
@@ -385,12 +386,11 @@ class Store {
     }
     return data;
   }
-  _getAvailableRewards = async (gaugeId, tokenId) =>{
+  _getAvailableRewards = async (gaugeId, tokenId) => {
     const client = new ApolloClient({
       uri: gaugeGraphUrl,
       cache: new InMemoryCache(),
     })
-    // const id = Math.trunc(Date.now()/(WEEK * 1000)).toString() + '-' + rewardToken + '-' + gauge
     const query = gql`
     query ClaimReward($tokenId: String, $gaugeId: String){
       stats(where: {token: $tokenId, gauge:  $gaugeId}){
@@ -401,16 +401,16 @@ class Store {
       }
     }
    `;
-  const {data} = await client.query({query: query,variables:{tokenId: tokenId, gaugeId: gaugeId}});
-  let claimed = 0
-  let rewards = 0
-  for (let i = 0; i < data.stats.length; i++) {
-     claimed += Number(data.stats[i].weeklyClaimedRewards)
-    
-  }
-  for (let i = 0; i < data.rewards.length; i++) {
-    rewards += Number(data.rewards[i].amount)
- }
+    const { data } = await client.query({ query: query, variables: { tokenId: tokenId, gaugeId: gaugeId } });
+    let claimed = 0
+    let rewards = 0
+    for (let i = 0; i < data.stats.length; i++) {
+      claimed += Number(data.stats[i].weeklyClaimedRewards)
+
+    }
+    for (let i = 0; i < data.rewards.length; i++) {
+      rewards += Number(data.rewards[i].amount)
+    }
     return rewards - claimed
   }
 
@@ -426,14 +426,14 @@ class Store {
     }
 
     let gauges = this.getStore('gauges')
-    if(!gauges || gauges.length === 0) {
+    if (!gauges || gauges.length === 0) {
       return null
     }
 
     gauges = await this._getCurrentGaugeVotes(web3, account, gauges)
     let myParam = null
 
-    if(payload.content && payload.content.address) {
+    if (payload.content && payload.content.address) {
       myParam = payload.content.address
     } else {
       const urlParams = new URLSearchParams(window.location.search);
@@ -443,55 +443,57 @@ class Store {
     const rewardTokenAddress = myParam
 
     // FTM, CREAM, MIM, DAI, USDC,
-    const defaultTokens =await this._getRewardToken()
+    const defaultTokens = await this._getRewardToken()
     //If it is a valid token, we add it to the search list
-    if(rewardTokenAddress && web3.utils.isAddress(rewardTokenAddress)) {
+    if (rewardTokenAddress && web3.utils.isAddress(rewardTokenAddress)) {
       let includesToken = false
-      for(let i = 0; i < defaultTokens.length; i++) {
-        if(defaultTokens[i].address.toLowerCase() === rewardTokenAddress.toLowerCase()) {
+      for (let i = 0; i < defaultTokens.length; i++) {
+        if (defaultTokens[i].address.toLowerCase() === rewardTokenAddress.toLowerCase()) {
           includesToken = true
           break;
         }
       }
 
-      if(!includesToken) {
+      if (!includesToken) {
         const rewardToken = await this._getTokenInfo(web3, rewardTokenAddress)
         defaultTokens.push(rewardToken)
       }
     }
     async.map(defaultTokens, async (token, callback) => {
       const bribery = await this._getBribery(web3, account, gauges, defaultTokens, token.address)
-      if(callback) {
+      if (callback) {
         callback(null, bribery)
       } else {
         return bribery
       }
     }, async (err, briberies) => {
-      if(err) {
+      if (err) {
         this.emitter.emit(ERROR, err)
       }
 
       let flatBriberies = briberies.flat()
       let rewards = []
-      for(let j = 0; j < flatBriberies.length; j++) {
+      for (let j = 0; j < flatBriberies.length; j++) {
         let bribery = flatBriberies[j]
-        for(let i = 0; i < bribery.length; i++) {
+        for (let i = 0; i < bribery.length; i++) {
           let bribe = bribery[i]
           const tokenData = await this._tokenPriceLogo(bribe.rewardToken.address)
-          rewards.push({
-            activePeriod: bribe.activePeriod,
-            rewardsUnlock: BigNumber(bribe.activePeriod).plus(WEEK).toFixed(0),
-            claimable: BigNumber(bribe.claimable).div(10**bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
-            canClaim: bribe.canClaim,
-            hasClaimed: bribe.hasClaimed,
-            gauge: bribe.gauge,
-            tokensForBribe: BigNumber(bribe.tokensForBribe).div(10**bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
-            rewardPerToken: bribe.rewardPerToken,
-            availableRewards: bribe.availableRewards,
-            rewardToken: bribe.rewardToken,
-            rewardTokenPrice: tokenData.price,
-            rewardTokenLogo: tokenData.logo
-          })
+          if((Number(bribe.availableRewards)/10 ** bribe.rewardToken.decimals) > MINIMUM_BRIBE){
+            rewards.push({
+              activePeriod: bribe.activePeriod,
+              rewardsUnlock: BigNumber(bribe.activePeriod).plus(WEEK).toFixed(0),
+              claimable: BigNumber(bribe.claimable).div(10 ** bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
+              canClaim: bribe.canClaim,
+              hasClaimed: bribe.hasClaimed,
+              gauge: bribe.gauge,
+              tokensForBribe: BigNumber(bribe.tokensForBribe).div(10 ** bribe.rewardToken.decimals).toFixed(bribe.rewardToken.decimals),
+              rewardPerToken: bribe.rewardPerToken,
+              availableRewards: bribe.availableRewards,
+              rewardToken: bribe.rewardToken,
+              rewardTokenPrice: tokenData.price,
+              rewardTokenLogo: tokenData.logo
+            })
+          }
         }
       }
 
@@ -500,7 +502,7 @@ class Store {
     })
 
     let votes = this.getStore('votes')
-    if(!votes || votes.length === 0) {
+    if (!votes || votes.length === 0) {
       return null
     }
     const voteRewards = await this._getVoteBribery(web3, account, votes)
@@ -518,7 +520,7 @@ class Store {
       ]);
 
       let balance = 0
-      if(getBalance) {
+      if (getBalance) {
         const account = await stores.accountStore.getStore('account');
         balance = await token.methods.balanceOf(account.address).call()
       }
@@ -530,7 +532,7 @@ class Store {
         balance
       }
 
-    } catch(ex) {
+    } catch (ex) {
       console.log("------------------------------------")
       console.log(`exception thrown in _getTokenInfo(${web3}, ${tokenAddress})`)
       console.log(ex)
@@ -545,29 +547,29 @@ class Store {
 
     const res = await Promise.all(votes.map(async (vote) => {
 
-      if(!vote.rewardsPerVote || vote.rewardsPerVote.length === 0) {
+      if (!vote.rewardsPerVote || vote.rewardsPerVote.length === 0) {
         return null
       }
 
       const rewards = await Promise.all(vote.rewardsPerVote.map(async (rewardTokenAddress) => {
-          const [estimateBribe, rewardAmount, voterState, hsaClaimed] = await Promise.all([
-            voteBriberyContract.methods.estimate_bribe(vote.index, rewardTokenAddress, account.address).call(),
-            voteBriberyContract.methods.reward_amount(vote.index, rewardTokenAddress).call(),
-            votesSourceContract.methods.getVoterState(vote.index, account.address).call(),
-            voteBriberyContract.methods.has_claimed(vote.index, rewardTokenAddress, account.address).call()
-          ]);
+        const [estimateBribe, rewardAmount, voterState, hsaClaimed] = await Promise.all([
+          voteBriberyContract.methods.estimate_bribe(vote.index, rewardTokenAddress, account.address).call(),
+          voteBriberyContract.methods.reward_amount(vote.index, rewardTokenAddress).call(),
+          votesSourceContract.methods.getVoterState(vote.index, account.address).call(),
+          voteBriberyContract.methods.has_claimed(vote.index, rewardTokenAddress, account.address).call()
+        ]);
 
-          const rewardToken = await this._getTokenInfo(web3, rewardTokenAddress)
+        const rewardToken = await this._getTokenInfo(web3, rewardTokenAddress)
 
-          return {
-            estimateBribe: BigNumber(estimateBribe).div(10**rewardToken.decimals).toFixed(rewardToken.decimals),
-            rewardAmount: BigNumber(rewardAmount).div(10**rewardToken.decimals).toFixed(rewardToken.decimals),
-            voterState,
-            hsaClaimed,
-            vote,
-            rewardToken
-          }
-        })
+        return {
+          estimateBribe: BigNumber(estimateBribe).div(10 ** rewardToken.decimals).toFixed(rewardToken.decimals),
+          rewardAmount: BigNumber(rewardAmount).div(10 ** rewardToken.decimals).toFixed(rewardToken.decimals),
+          voterState,
+          hsaClaimed,
+          vote,
+          rewardToken
+        }
+      })
       )
 
       return rewards
@@ -592,7 +594,7 @@ class Store {
     ]);
 
     let briberyResultsPromisesV2 = []
-    if(gaugesPerRewardV2.length > 0) {
+    if (gaugesPerRewardV2.length > 0) {
       briberyResultsPromisesV2 = gaugesPerRewardV2.map(async (gauge) => {
 
         const [activePeriod, claimable, lastUserClaim, tokensForBribe, rewardPerToken] = await Promise.all([
@@ -602,13 +604,13 @@ class Store {
           briberyTokensContract.methods.tokens_for_bribe(account.address, gauge, rewardTokenAddress).call(),
           briberyV2.methods.reward_per_token(gauge, rewardTokenAddress).call(),
         ]);
-    const gaugeController = new web3.eth.Contract(GAUGE_CONTROLLER_ABI, GAUGE_CONTROLLER_ADDRESS)
-    const period = ((Date.now()/1000).toFixed(0) / WEEK).toFixed(0)* WEEK
-      const [pointWeight] = await Promise.all([
-         gaugeController.methods.points_weight(gauge, period).call()
+        const gaugeController = new web3.eth.Contract(GAUGE_CONTROLLER_ABI, GAUGE_CONTROLLER_ADDRESS)
+        const period = ((Date.now() / 1000).toFixed(0) / WEEK).toFixed(0) * WEEK
+        const [pointWeight] = await Promise.all([
+          gaugeController.methods.points_weight(gauge, period).call()
 
-      ]);
-        const availableRewards = await this._getAvailableRewards(gauge.toString().toLowerCase(),rewardTokenAddress.toString())
+        ]);
+        const availableRewards = await this._getAvailableRewards(gauge.toString().toLowerCase(), rewardTokenAddress.toString())
         return {
           version: 2,
           claimable,
@@ -636,9 +638,9 @@ class Store {
       return gaugeController.methods.vote_user_slopes(account.address, gauge.gaugeAddress).call()
     }));
 
-    for(let i = 0; i < gauges.length; i++) {
+    for (let i = 0; i < gauges.length; i++) {
       gauges[i].votes = userVoteSlopes[i]
-      gauges[i].votes.userVoteSlopeAmount = BigNumber(userVoteSlopes[i].slope).div(10**10).toFixed(10)
+      gauges[i].votes.userVoteSlopeAmount = BigNumber(userVoteSlopes[i].slope).div(10 ** 10).toFixed(10)
       gauges[i].votes.userVoteSlopePercent = BigNumber(userVoteSlopes[i].power).div(100).toFixed(2)
     }
 
@@ -658,7 +660,7 @@ class Store {
 
     const { reward } = payload.content;
 
-    this._callClaimReward(web3, account, reward.gauge.gaugeAddress, reward.rewardToken.address, reward.version,  (err, res) => {
+    this._callClaimReward(web3, account, reward.gauge.gaugeAddress, reward.rewardToken.address, reward.version, (err, res) => {
       if (err) {
         return this.emitter.emit(ERROR, err);
       }
@@ -669,7 +671,7 @@ class Store {
 
   _callClaimReward = async (web3, account, gauge, rewardToken, version, callback) => {
     let address = BRIBERY_ADDRESS_V2
-    if(version === 1) {
+    if (version === 1) {
       address = BRIBERY_ADDRESS
     }
     const bribery = new web3.eth.Contract(BRIBERY_ABI, address);
@@ -689,7 +691,7 @@ class Store {
     try {
       const token = await this._getTokenInfo(web3, address, true)
       return this.emitter.emit(SEARCH_TOKEN_RETURNED, token);
-    } catch(ex) {
+    } catch (ex) {
       console.log(ex)
       return this.emitter.emit(ERROR, ex)
     }
@@ -708,7 +710,7 @@ class Store {
 
     const { rewardToken, rewardAmount, gauge } = payload.content;
 
-    let sendAmount = BigNumber(rewardAmount).times(10**rewardToken.decimals).toFixed(0)
+    let sendAmount = BigNumber(rewardAmount).times(10 ** rewardToken.decimals).toFixed(0)
 
     this._checkAllowance(web3, rewardToken.address, account.address, BRIBERY_ADDRESS_V2, sendAmount, (err) => {
       if (err) {
@@ -728,7 +730,7 @@ class Store {
     const tokenContract = new web3.eth.Contract(ERC20_ABI, token)
     const allowance = await tokenContract.methods.allowance(owner, spender).call();
 
-    if(BigNumber(spendingAmount).lte(allowance)) {
+    if (BigNumber(spendingAmount).lte(allowance)) {
       callback()
     } else {
       const gasPrice = await stores.accountStore.getGasPrice();
@@ -756,7 +758,7 @@ class Store {
 
     const { rewardToken, rewardAmount, vote } = payload.content;
 
-    let sendAmount = BigNumber(rewardAmount).times(10**rewardToken.decimals).toFixed(0)
+    let sendAmount = BigNumber(rewardAmount).times(10 ** rewardToken.decimals).toFixed(0)
 
     this._checkAllowance(web3, rewardToken.address, account.address, VOTE_BRIBERY_ADDRESS, sendAmount, (err) => {
       if (err) {
