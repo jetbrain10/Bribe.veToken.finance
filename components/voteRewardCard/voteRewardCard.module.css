@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   border-bottom: 3px solid #0048FF;
+  max-width: 280px;
 }
 
 .chainContainerPositive {
@@ -12,6 +13,7 @@
   display: flex;
   flex-direction: column;
   border-bottom: 3px solid #4aa166;
+  max-width: 280px;
 }
 
 .tryButton {
